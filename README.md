@@ -15,3 +15,5 @@ Download 2 files:-
 
       1st is csv file.Which contain dataset
       2nd contain main environent.
+
+For more help in gui visit this site https://www.python-course.eu/tkinter_canvas.php
