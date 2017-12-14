@@ -9,7 +9,9 @@ setup:-
       install python library "tkinter". Which is used for developing applications in gui.
       install python library "pandas". Which is used for managing data from csv files.
 
-thats it.
-Download 2 files.
-  1st is csv file.Which contain dataset
-  2nd contain main environent.
+That's it.
+
+Download 2 files:-
+
+      1st is csv file.Which contain dataset
+      2nd contain main environent.
