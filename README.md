@@ -14,5 +14,6 @@ Files info:-
       csv file -> Which contain dataset
       environent.py -> Environment for 2 agents,which can be controlled using listeners.
       nearest_neighbour.py -> logic for controlling agent using NN.
+      client.py -> demo file for client-server communication.
 
 For more help in gui visit this site https://www.python-course.eu/tkinter_canvas.php
