@@ -9,11 +9,10 @@ setup:-
       install python library "tkinter". used for developing applications in gui.
       install python library "pandas". used for managing data from csv files.
 
-That's it.
+Files info:-
 
-Download 2 files:-
-
-      1st is csv file.Which contain dataset
-      2nd contain main environent.
+      csv file -> Which contain dataset
+      environent.py -> Environment for 2 agents,which can be controlled using listeners.
+      nearest_neighbour.py -> logic for controlling agent using NN.
 
 For more help in gui visit this site https://www.python-course.eu/tkinter_canvas.php
