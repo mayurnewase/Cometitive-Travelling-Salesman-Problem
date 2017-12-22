@@ -97,7 +97,7 @@ print("Current city of agent 1 is" , agent1_state)
 print("Current city of agent 2 is" , agent2_state)
 
 master.update()														#IMPORTANT->required for sleep call in tkinter
-time.sleep(4)
+#time.sleep(4)
 
 #agent1_state , agent2_state = moveToCityId(1 , 3 , agent1_state , agent2_state)
 #agent1_state , agent2_state = moveToCityId(2 , 7 , agent1_state , agent2_state)
@@ -140,27 +140,47 @@ def acceptNextMoveAgent2(conn2):
 
 	return agent1_state , agent2_state
 
+
+def giveInfoToAgent(conn , agent1_state , agent2_state):
+	conn.send(agent1_state)
+	conn.send(agent2_state)
+
+
+
 conn = initServer()
 
 while True:
 	print("initial agent1_state is " , agent1_state)
 	print("initial agent2_state is " , agent2_state)
 
+	conn.send(agent1_state)
+	conn.send(agent2_state)
+
 	msg = conn.recv()
 	msg = str(msg)
+
+
 	print("Agent 1 going to " + msg)
-
 	agent1_state , agent2_state = moveToCityId(1 , int(msg) , agent1_state , agent2_state)
-
+	giveInfoToAgent(conn , agent1_state , agent2_state)
 	print("new agent1_state is " , agent1_state)
 	print("new agent2_state is " , agent2_state)
 	print("-----------------------------------------------")
 
-	master.update()
-#agent1_state , agent2_state =  acceptNextMoveAgent1(conn , agent1_state , agent2_state)
 
-#agent1_state , agent2_state = agent1_state , agent2_state
-#acceptNextMoveAgent2(conn2 , agent1_state , agent2_state)
+	master.update()
+	#agent1_state , agent2_state =  acceptNextMoveAgent1(conn , agent1_state , agent2_state)
+	#agent1_state , agent2_state = agent1_state , agent2_state
+	#acceptNextMoveAgent2(conn2 , agent1_state , agent2_state)
+
+
+
+
+
+
+
+
+
 
 
 
