@@ -7,68 +7,64 @@ conn = Client(address, authkey=b'secret password')
 csv_file_path = "distanceFile.csv"
 df = pd.read_csv(csv_file_path)
 
-visited = {}						#fix this bug
 
-def findNearestNeighbour(currentCityId , j):
+def findNearestNeighbour(currentCityId , j , visited):
 	
 	dist = df.loc[currentCityId,"dist1":"dist10"]
 	print(dist)
-
+	
+	print("Visited array " , visited)
+	toCheck = []
 	min = 9999
-	for i in range(len(dist)):
-		if(dist[i] < min and dist[i] != 0):
-			if(dist[i] not in visited):				#it still go inside,even if city is visited
-				min = dist[i]
-				cityIndex = i + 1
-	print("min is " , min , "index is " , cityIndex)
+	for cityIndex in range(len(dist)):
+		if(dist[cityIndex] != 0):			#remove current city.
+			#min = dist[i]
+			#cityIndex = i + 1
+			toCheck.append(cityIndex)
+	print("toCheck array " , toCheck)
 
-	visited[j] = cityIndex
-	print("visited is " , visited)
-	j+=1
-	return cityIndex
+	unVisited = []
+
+	for city in toCheck:
+		if city not in visited:
+			unVisited.append(city)
+
+	print("unVisited array " , unVisited)
+
+	minDist = 9999
+	for city in unVisited:
+		if (dist[city] < minDist):
+			minDist = dist[city]
+			print("city equaling to visit" , city)
+			cityToVisit = city
+
+	print("cityToVisit " , cityToVisit)
+	print("====================================")
+	return cityToVisit
 
 #print (df)
 j=0
-while (j < 10):
+visited = []
+initialStateAdded = False
+while (len(visited) < 10):
 	agent1_state = str(conn.recv())
 	agent2_state = str(conn.recv())
 	print("states are ",agent1_state + " " , agent2_state)
-	goToCity = findNearestNeighbour(int(agent1_state) , j)
 	
-	#msg = input("say something ")
-	conn.send(goToCity)
+	if(initialStateAdded == False):
+		visited.append(int(agent1_state))
+		initialStateAdded = True
 
-	time.sleep(5)
+	goToCity = findNearestNeighbour(int(agent1_state) , j , visited)
+	
+	visited.append(goToCity)
+	
+	conn.send(goToCity)
+	time.sleep(7)
+	
 	j += 1
 
 conn.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
