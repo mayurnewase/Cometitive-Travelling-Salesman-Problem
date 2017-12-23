@@ -11,9 +11,20 @@ setup:-
 
 Files info:-
 
-      csv file -> Which contain dataset
-      environent.py -> Environment for 2 agents,which can be controlled using listeners.
-      nearest_neighbour.py -> logic for controlling agent using NN.
-      client.py -> demo file for client-server communication.
+Dataset and Environment:-
 
+      csv file -> Contains dataset
+      environent.py -> Environment for 2 agents,controlled using listeners.
+
+Connection Demo:-
+      
+      client.py -> demo file for basic client-server communication.
+      
+Heuristic methods:-(under developement)
+      
+      nearest_neighbour.py -> logic for controlling agent using NN.
+      random_neighbour.py ->logic for controlling agent using RN.      
+      
+
+      
 For more help in gui visit this site https://www.python-course.eu/tkinter_canvas.php
