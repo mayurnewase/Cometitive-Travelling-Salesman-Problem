@@ -76,11 +76,11 @@ showAgentState(X_pos[agent2_state] , Y_pos[agent2_state])
 
 def moveToCityId(agentNo , cityId , agent1_state , agent2_state):
 
-	print("Inside function----->")
-	print("agent1_state passed is " , agent1_state)
-	print("agent2_state passed is " , agent2_state)
-	print("city ID passed is" , cityId)
-	print("Outside function----->")
+	#print("Inside function----->")
+	#print("agent1_state passed is " , agent1_state)
+	#print("agent2_state passed is " , agent2_state)
+	#print("city ID passed is" , cityId)
+	#print("Outside function----->")
 
 	if(agentNo == 1):
 		drawCircle(X_pos[agent1_state] , Y_pos[agent1_state])		#make current blue	
@@ -142,8 +142,9 @@ def acceptNextMoveAgent2(conn2):
 
 
 def giveInfoToAgent(conn , agent1_state , agent2_state):
+	print("agent1_state sending is ",agent1_state)
 	conn.send(agent1_state)
-	conn.send(agent2_state)
+	#conn.send(agent2_state)
 
 
 
@@ -152,9 +153,11 @@ conn = initServer()
 while True:
 	print("initial agent1_state is " , agent1_state)
 	print("initial agent2_state is " , agent2_state)
+	giveInfoToAgent(conn , agent1_state , agent2_state)
 
-	conn.send(agent1_state)
-	conn.send(agent2_state)
+	#conn.send(agent1_state)
+	
+	#conn.send(agent2_state)
 
 	msg = conn.recv()
 	msg = str(msg)
@@ -162,7 +165,6 @@ while True:
 
 	print("Agent 1 going to " + msg)
 	agent1_state , agent2_state = moveToCityId(1 , int(msg) , agent1_state , agent2_state)
-	giveInfoToAgent(conn , agent1_state , agent2_state)
 	print("new agent1_state is " , agent1_state)
 	print("new agent2_state is " , agent2_state)
 	print("-----------------------------------------------")

@@ -8,10 +8,10 @@ csv_file_path = "distanceFile.csv"
 df = pd.read_csv(csv_file_path)
 
 
-def findNearestNeighbour(currentCityId , j , visited):
+def findNearestNeighbour(currentCityId , visited):
 	
-	dist = df.loc[currentCityId,"dist1":"dist10"]
-	print(dist)
+	dist = df.loc[currentCityId,"dist0":"dist10"]
+	print("distance matrix of ",currentCityId , " is \n" ,dist)
 	
 	print("Visited array " , visited)
 	toCheck = []
@@ -20,7 +20,7 @@ def findNearestNeighbour(currentCityId , j , visited):
 		if(dist[cityIndex] != 0):			#remove current city.
 			#min = dist[i]
 			#cityIndex = i + 1
-			toCheck.append(cityIndex)
+			toCheck.append(cityIndex)		#changed
 	print("toCheck array " , toCheck)
 
 	unVisited = []
@@ -46,25 +46,54 @@ def findNearestNeighbour(currentCityId , j , visited):
 j=0
 visited = []
 initialStateAdded = False
-while (len(visited) < 10):
+while (len(visited) <= 11):
 	agent1_state = str(conn.recv())
-	agent2_state = str(conn.recv())
-	print("states are ",agent1_state + " " , agent2_state)
+	
+	print("agent1_state recieved is ",agent1_state)
+	#agent2_state = str(conn.recv())
+	print("states are ",agent1_state)
 	
 	if(initialStateAdded == False):
 		visited.append(int(agent1_state))
 		initialStateAdded = True
 
-	goToCity = findNearestNeighbour(int(agent1_state) , j , visited)
+	goToCity = findNearestNeighbour(int(agent1_state)  , visited)
 	
 	visited.append(goToCity)
 	
 	conn.send(goToCity)
-	time.sleep(7)
-	
+	#time.sleep(7)
+	input("")
 	j += 1
 
 conn.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
