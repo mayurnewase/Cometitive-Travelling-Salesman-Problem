@@ -18,12 +18,12 @@ Files info:-
 
 2.Connection Demo:-
       
-      client.py -> demo file for basic client-server communication.
+      client.py -> Demo file for basic client-server communication.
       
 3.Heuristic methods:-(under developement)
       
-      nearest_neighbour.py -> logic for controlling agent using NN.
-      random_neighbour.py ->logic for controlling agent using RN.      
+      nearest_neighbour.py -> Logic for controlling agent using NN.
+      random_neighbour.py ->Logic for controlling agent using RN.      
       
 
       
