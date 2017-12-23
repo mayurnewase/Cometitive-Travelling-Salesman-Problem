@@ -13,7 +13,7 @@ Files info:-
 
 1.Dataset and Environment:-
 
-      csv file -> Contains dataset
+      dataset.csv file -> Contains dataset
       environent.py -> Environment for 2 agents,controlled using listeners.
 
 2.Connection Demo:-
