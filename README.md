@@ -23,7 +23,8 @@ Files info:-
 3.Heuristic methods:-(under developement)
       
       nearest_neighbour.py -> Logic for controlling agent using NN.
-      random_neighbour.py ->Logic for controlling agent using RN.      
+      random_neighbour.py ->Logic for controlling agent using RN.
+      aggressive_neighbour.py ->(under developement)
       
 
       
