@@ -49,20 +49,22 @@ initialStateAdded = False
 while (len(visited) <= 11):
 	agent1_state = str(conn.recv())
 	agent2_state = str(conn.recv())
+	visited = conn.recv()
 
 	print("agent1_state recieved is ",agent1_state)
 	print("agent2_state recieved is ",agent2_state)
 	print("states are ",agent1_state , agent2_state)
 	
-	if(initialStateAdded == False):
-		visited.append(int(agent1_state))
-		initialStateAdded = True
+	#if(initialStateAdded == False):
+		#visited.append(int(agent1_state))
+		#initialStateAdded = True
 
 	goToCity = findNearestNeighbour(int(agent2_state)  , visited)
 	
-	visited.append(goToCity)
+	#visited.append(goToCity)
 	
 	conn.send(goToCity)
+	print("visited array is ",visited)
 	#time.sleep(7)
 	input("")
 	j += 1

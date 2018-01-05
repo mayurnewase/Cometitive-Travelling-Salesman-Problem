@@ -182,29 +182,36 @@ def acceptNextMoveAgent2(conn2 , agent1_state , agent2_state):
 	return agent1_state , agent2_state
 
 
-def giveInfoToAgent(conn , conn2 ,agent1_state , agent2_state):
+def giveInfoToAgent(conn , conn2 ,agent1_state , agent2_state , visited):
 	#give info back to both agents.
 	#info includes current states of both agents
 
 	#print("agent1_state sending is ",agent1_state)
 	conn.send(agent1_state)
 	conn.send(agent2_state)
+	conn.send(visited)
 
 	conn2.send(agent1_state)
-	conn2.send(agent2_state)	
-
+	conn2.send(agent2_state)
+	conn2.send(visited)
 
 conn , conn2 = initServer()
 
+visited = []
+visited.append(agent1_state)
+visited.append(agent2_state)
+
+print("initial agent1_state is " , agent1_state)
+print("initial agent2_state is " , agent2_state)
+
 while True:
-	print("initial agent1_state is " , agent1_state)
-	print("initial agent2_state is " , agent2_state)
 	
-	giveInfoToAgent(conn , conn2 , agent1_state , agent2_state)	#send info to agents
+	
+		
+	giveInfoToAgent(conn , conn2 , agent1_state , agent2_state , visited)	#send info to agents
 
 	msg = conn.recv()			#get move from agent1
 	msg = str(msg)
-
 	msg2 = conn2.recv()			#get move from agent2
 	msg2 = str(msg2)
 
@@ -217,6 +224,8 @@ while True:
 	print("new agent2_state is " , agent2_state)
 	print("-----------------------------------------------")
 
+	visited.append(agent1_state)
+	visited.append(agent2_state)
 
 	master.update()
 	#agent1_state , agent2_state =  acceptNextMoveAgent1(conn , agent1_state , agent2_state)
@@ -255,40 +264,4 @@ while True:
 #t1.join()
 #t2.join()
 
-
-
-
-
-
-
-
-
-
-
-
-
 mainloop()		#important for tkinter to persist till end of program
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
