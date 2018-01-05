@@ -74,3 +74,33 @@ while (len(visited) <= 11):
 	j += 1
 
 conn.close()		#close connection safely
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

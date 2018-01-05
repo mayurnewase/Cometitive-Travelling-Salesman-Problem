@@ -212,7 +212,7 @@ while True:
 	print("Agent 2 going to " + msg2)
 
 	agent1_state , agent2_state = moveToCityId(1 , int(msg) , agent1_state , agent2_state)
-	agent1_state , agent2_state = moveToCityId(2 , int(msg) , agent1_state , agent2_state)
+	agent1_state , agent2_state = moveToCityId(2 , int(msg2) , agent1_state , agent2_state)
 	print("new agent1_state is " , agent1_state)
 	print("new agent2_state is " , agent2_state)
 	print("-----------------------------------------------")
@@ -268,3 +268,27 @@ while True:
 
 
 mainloop()		#important for tkinter to persist till end of program
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

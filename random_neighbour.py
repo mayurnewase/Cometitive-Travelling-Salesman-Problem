@@ -33,13 +33,12 @@ def random_neighbour(currentCityId , visited):
 	print("new city selected is ",newCity)
 	return newCity
 
-
-
 visited = []
 initialStateAdded = False
 
 while(len(visited) < 11):
 	agent1_state = str(conn.recv())
+	agent2_state = str(conn.recv())
 
 	if(initialStateAdded == False):
 		visited.append(int(agent1_state))

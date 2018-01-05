@@ -11,7 +11,7 @@ df = pd.read_csv(csv_file_path)
 def findNearestNeighbour(currentCityId , visited):
 	
 	dist = df.loc[currentCityId,"dist0":"dist10"]
-	print("distance matrix of ",currentCityId , " is \n" ,dist)
+	print("distance matrix of ", currentCityId , " is \n" ,dist)
 	
 	print("Visited array " , visited)
 	toCheck = []
@@ -58,7 +58,7 @@ while (len(visited) <= 11):
 		visited.append(int(agent1_state))
 		initialStateAdded = True
 
-	goToCity = findNearestNeighbour(int(agent1_state)  , visited)
+	goToCity = findNearestNeighbour(int(agent2_state)  , visited)
 	
 	visited.append(goToCity)
 	
@@ -68,5 +68,33 @@ while (len(visited) <= 11):
 	j += 1
 
 conn.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
