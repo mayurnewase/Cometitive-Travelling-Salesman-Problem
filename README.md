@@ -27,5 +27,13 @@ Files info:-
       aggressive_neighbour.py ->(under developement)
       
 
+To Do:-
       
-For more help in gui visit this site https://www.python-course.eu/tkinter_canvas.php
+      implement shared visited array(which will be shared by both agents).->Implement this in environment.
+      
+
+
+
+      
+For more help in tkinter for gui visit this site https://www.python-course.eu/tkinter_canvas.php
+For tips on pandas visit this site http://pythonhow.com/accessing-dataframe-columns-rows-and-cells/
