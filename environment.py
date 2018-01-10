@@ -14,11 +14,10 @@ X_pos = df.x_pos 				#read x co-ordinates
 Y_pos = df.y_pos 				#read y co-ordinates
 id = df.id 						#read id of city
 
-
 #tkinter init-----------------------------------------------------
 master = Tk()					#initialize tkinter
 w = Canvas(master , width = 600 , height = 600)		#create canvas of size 600*600
-w.pack()	
+w.pack()
 
 #env graphics-----------------------------------------------------
 
@@ -95,7 +94,7 @@ showAgentState(X_pos[agent2_state] , Y_pos[agent2_state])
 ##Agent movement---------------------------------------------------------------------------
 
 def moveToCityId(agentNo , cityId , agent1_state , agent2_state):
-	#move the agent to differenr city
+	#move the agent to different city
 	#make current city back to normal color(to show agent has left)
 	#and change target city's color different(to show agents current position)
 
@@ -120,14 +119,40 @@ def moveToCityId(agentNo , cityId , agent1_state , agent2_state):
 print("Current city of agent 1 is" , agent1_state)
 print("Current city of agent 2 is" , agent2_state)
 
-master.update()								#IMPORTANT->required for sleep call in tkinter
-#time.sleep(4)
+def showInitialAgentData():
+	#w.create_text(500 , 25 , text="Agent 1 benifit\nAgent 2 benifit")
+	T = Text(master, height=2, width=30)
+	T.pack()
+	T.insert(END, "Agent 1 benifit : 0 \nAgent 2 benifit : 0\n")
+	#T.delete("1.18" , "1.20")
+	#T.insert('1.19' , 20)
 
+	#T.insert('1.19' , 234)
+	#T.delete('1.17' , '1.19')
+	return T
+
+T = showInitialAgentData()
+
+def updateAgentData(benifit):
+
+	T.delete("1.18" , "1.20")
+	T.delete("2.18" , "2.20")
+	T.insert('1.19' , benifit[0])
+	T.insert('2.19' , benifit[1])
+	master.update()
+
+
+
+master.update()								#IMPORTANT->required for sleep call in tkinter
+
+#time.sleep(4)
 #agent1_state , agent2_state = moveToCityId(1 , 3 , agent1_state , agent2_state)
 #agent1_state , agent2_state = moveToCityId(2 , 7 , agent1_state , agent2_state)
 
 #print("Final city of agent 1 is" , agent1_state)
 #print("Final city of agent 2 is" , agent2_state)
+
+
 
 def initServer():
 	#create 2 listeners that accepts outputs from external agent programmes.
@@ -150,43 +175,10 @@ def initServer():
 
 	return conn , conn2
 
-def acceptNextMoveAgent1(conn , agent1_state , agent2_state):
-	#accept move from agent1
-	#input->
-		#connection of agent1
-		#current states of both agents
-	#output->
-		#new states of both agents
-
-	msg = conn.recv()
-	msg = str(msg)
-	print("Agent 1 going to " + msg)
-
-	agent1_state , agent2_state = moveToCityId(1 , int(msg) , agent1_state , agent2_state)
-	
-	return agent1_state , agent2_state
-
-def acceptNextMoveAgent2(conn2 , agent1_state , agent2_state):
-	#accept move from agent2
-	#input->
-		#connection of agent2
-		#current states of both agents(before moving to new city)
-	#output->
-		#new states of both agents
-
-	msg = conn2.recv()
-	msg = str(msg)
-	print("Agent 2 going to " + msg)
-	agent1_state , agent2_state = moveToCityId(1 , int(msg) , agent1_state , agent2_state)
-
-	return agent1_state , agent2_state
-
-
 def giveInfoToAgent(conn , conn2 ,agent1_state , agent2_state , visited):
 	#give info back to both agents.
 	#info includes current states of both agents
 
-	#print("agent1_state sending is ",agent1_state)
 	conn.send(agent1_state)
 	conn.send(agent2_state)
 	conn.send(visited)
@@ -197,17 +189,22 @@ def giveInfoToAgent(conn , conn2 ,agent1_state , agent2_state , visited):
 
 conn , conn2 = initServer()
 
+
+	
+
 visited = []
+benifit = [0] * 2
+
 visited.append(agent1_state)
 visited.append(agent2_state)
 
 print("initial agent1_state is " , agent1_state)
 print("initial agent2_state is " , agent2_state)
+prev1_state = agent1_state
+prev2_state = agent2_state
 
 while True:
 	
-	
-		
 	giveInfoToAgent(conn , conn2 , agent1_state , agent2_state , visited)	#send info to agents
 
 	msg = conn.recv()			#get move from agent1
@@ -224,8 +221,29 @@ while True:
 	print("new agent2_state is " , agent2_state)
 	print("-----------------------------------------------")
 
+	if(agent1_state != agent2_state):
+		benifit[0] += 1
+		benifit[1] += 1
+
+	else:
+		df2 = df.loc[prev1_state , "dist0":"dist10"]
+		cost1 = df2[agent1_state]
+
+		df2 = df.loc[prev2_state , "dist0":"dist10"]
+		cost2 = df2[agent2_state]
+
+		if(cost1 > cost2):
+			benifit[0] += 1
+		else:
+			benifit[1] += 1
+
+	updateAgentData(benifit)
 	visited.append(agent1_state)
 	visited.append(agent2_state)
+
+	prev1_state = agent1_state
+	prev2_state = agent2_state
+
 
 	master.update()
 	#agent1_state , agent2_state =  acceptNextMoveAgent1(conn , agent1_state , agent2_state)
