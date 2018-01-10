@@ -37,5 +37,4 @@ To Do:-
       
 For more help in tkinter for gui visit this site https://www.python-course.eu/tkinter_canvas.php/
 
-
 For tips on pandas visit this site http://pythonhow.com/accessing-dataframe-columns-rows-and-cells/
