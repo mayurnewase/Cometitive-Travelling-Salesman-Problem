@@ -2,9 +2,10 @@
 
 This is project for solving Compititive travelling salesman problem by using hyperheuristic methods.
 
-IMPORTANT:-
+Changelog:-
       
-      LATEST BRANCH IS "aggressive_completed".
+      Aggressive heuristic method completed.
+
 
 Setup:-
 
