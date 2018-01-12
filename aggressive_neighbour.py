@@ -38,7 +38,7 @@ def findNearestNeighbour(currentCityId , visited):
 			print("city equaling to visit" , city)
 			cityToVisit = city
 
-	print("cityToVisit " , cityToVisit)
+	#print("cityToVisit " , cityToVisit)
 	print("====================================")
 	return cityToVisit
 
@@ -50,6 +50,7 @@ while (len(visited) <= 11):
 	agent1_state = str(conn.recv())
 	agent2_state = str(conn.recv())
 	visited = conn.recv()
+	agent1_target = str(conn.recv())
 
 	print("agent1_state recieved is ",agent1_state)
 	print("agent2_state recieved is ",agent2_state)
@@ -59,10 +60,32 @@ while (len(visited) <= 11):
 		#visited.append(int(agent1_state))
 		#initialStateAdded = True
 
-	goToCity = findNearestNeighbour(int(agent2_state)  , visited)
-	
+	nearestCity = findNearestNeighbour(int(agent2_state)  , visited)
 	#visited.append(goToCity)
+	print("found nearestCity ",nearestCity)
+	#cost for agent 2 current state -> nearest neighbour
+	row_data = df.loc[int(agent2_state) , "dist0":"dist10"]
+	cost1 = row_data[nearestCity]
+	print("agent 2 current state -> nearest neighbour" , cost1)
+
+	#cost for agent 2's current state -> agent 1's target city
+	row_data = df.loc[int(agent2_state) , "dist0":"dist10"]
+	cost2 = row_data[int(agent1_target)]
+	print("agent 2 current state -> agent 1's target" , cost2)
 	
+	#cost for agent 1's current state -> agent 1's target city
+	row_data = df.loc[int(agent1_state) , "dist0":"dist10"]
+	cost3 = row_data[int(agent1_target)]
+	print("agent 1 current state -> agent 1's target cost" , cost3)
+
+	if(cost2 < cost3):				#Aggressive agent can reach others target early
+		goToCity = agent1_target
+		print("Ditching that nigga..... LMAO")
+	else:
+		goToCity = nearestCity
+
+
+	print("Going to " , goToCity)
 	conn.send(goToCity)
 	print("visited array is ",visited)
 	#time.sleep(7)
