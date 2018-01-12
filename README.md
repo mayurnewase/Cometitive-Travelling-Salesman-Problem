@@ -2,7 +2,6 @@
 
 This is project for solving Compititive travelling salesman problem by using hyperheuristic methods.
 
-
 Setup:-
 
       install python 2.x or 3.x
@@ -24,12 +23,12 @@ Files info:-
       
       nearest_neighbour.py -> Logic for controlling agent using NN.
       random_neighbour.py ->Logic for controlling agent using RN.
-      aggressive_neighbour.py ->(under developement)
+      aggressive_neighbour.py ->Logic for controlling agent using aggressive heuristic.
       
 
 To Do:-
       
-      implement shared visited array(which will be shared by both agents).->Implement this in environment.
+      Before going for Hyper-heuristic,check everything works correctly.
       
 
 
