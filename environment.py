@@ -209,10 +209,12 @@ while True:
 
 	msg = conn.recv()			#get move from agent1
 	msg = str(msg)
+	print("Agent 1 going to " + msg)
+	
+	conn2.send(int(msg))			#Give agent 1 target city to aggressive agent
+
 	msg2 = conn2.recv()			#get move from agent2
 	msg2 = str(msg2)
-
-	print("Agent 1 going to " + msg)
 	print("Agent 2 going to " + msg2)
 
 	agent1_state , agent2_state = moveToCityId(1 , int(msg) , agent1_state , agent2_state)
@@ -228,11 +230,13 @@ while True:
 	else:
 		df2 = df.loc[prev1_state , "dist0":"dist10"]
 		cost1 = df2[agent1_state]
+		print("Agent 1 transition cost " , cost1)
 
 		df2 = df.loc[prev2_state , "dist0":"dist10"]
 		cost2 = df2[agent2_state]
+		print("Agent 2 transition cost " , cost2)
 
-		if(cost1 > cost2):
+		if(cost1 < cost2):
 			benifit[0] += 1
 		else:
 			benifit[1] += 1
