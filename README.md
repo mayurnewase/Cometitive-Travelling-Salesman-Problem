@@ -2,10 +2,6 @@
 
 This is project for solving Compititive travelling salesman problem by using hyperheuristic methods.
 
-Changelog
-
-      Aggressive heuristic method completed
-
 Setup:-
 
       install python 2.x or 3.x
