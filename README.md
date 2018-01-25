@@ -5,6 +5,7 @@ This is project for solving Compititive travelling salesman problem by using hyp
 Changelog:-
 	
 	Aggressive heuristic method completed.
+	2-opt completed.
 
 Setup:-
 
@@ -25,10 +26,14 @@ Files info:-
       
 3.Heuristic methods:-(under developement->Final check remaining)
       
-      nearest_neighbour.py -> Logic for controlling agent using NN.
-      random_neighbour.py ->Logic for controlling agent using RN.
+      nearest_neighbour.py -> Logic for controlling agent using Nearest Neighbour heuristic.
+      random_neighbour.py ->Logic for controlling agent using Random Neighbour heuristic.
+      2opt.py -> Logic for controlling agent using 2-opt heuristic.
       aggressive_neighbour.py ->Logic for controlling agent using aggressive heuristic.
-      
+
+4.Test-bed:-
+	
+	It's used for testing standalone heuristic method on single agent.
 
 To Do:-
       
