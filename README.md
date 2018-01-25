@@ -4,8 +4,8 @@ This is project for solving Compititive travelling salesman problem by using hyp
 
 Changelog:-
 	
-	Aggressive heuristic method completed.
-	2-opt completed.
+      Aggressive heuristic method completed.
+      2-opt completed.
 
 Setup:-
 
@@ -33,7 +33,7 @@ Files info:-
 
 4.Test-bed:-
 	
-	It's used for testing standalone heuristic method on single agent.
+      It's used for testing standalone heuristic method on single agent.
 
 To Do:-
       
