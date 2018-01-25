@@ -13,7 +13,7 @@ def findNearestNeighbour(currentCityId , visited):
 		#currentCityId : current city of agent
 		#visited : visited array
 	
-	dist = df.loc[currentCityId,"dist0":"dist10"]			#fetch distance values for current city
+	dist = df.loc[currentCityId,"dist0":"dist5"]			#fetch distance values for current city
 	print("distance matrix of ",currentCityId , " is \n" ,dist)
 	print("Visited array " , visited)
 
@@ -21,7 +21,7 @@ def findNearestNeighbour(currentCityId , visited):
 	
 	min = 9999
 	for cityIndex in range(len(dist)):
-		if(dist[cityIndex] != 0):			#remove current city.
+		if(dist[cityIndex] != 0):			#remove current and unreachable cities.
 			#min = dist[i]
 			#cityIndex = i + 1
 			toCheck.append(cityIndex)		#changed
@@ -50,33 +50,38 @@ def findCostOfTravel(route):
 
 	cost = 0
 	for i in range(len(route) - 1):
-		row_data = df.loc[route[i] , "dist0" : "dist10"]
+		row_data = df.loc[route[i] , "dist0" : "dist5"]
+		if(row_data[route[i + 1]] == 0):					#if there is no path between cities
+			return 9999
 		cost += row_data[route[i+1]]
 
 	return cost
 
-def swapper(route):
+def swapper(route , startCityIndex , endCityIndex):
+	print("startCity is ",startCityIndex)
+	print("endCity is ",endCityIndex)
+
 	route1 = route.copy()
 	route2 = route.copy()
 
-	city0 = route[0]
-	city1 = route[1]
-	city2 = route[2]
-	city3 = route[3]
+	city0 = route[startCityIndex]
+	city1 = route[startCityIndex+1]
+	city2 = route[startCityIndex+2]
+	city3 = route[startCityIndex+3]
+	print("Cities are  ",city0 , city1 , city2 , city3)
+	route1[startCityIndex + 1] = city2			#1 & 2
+	route1[startCityIndex + 2] = city1
 
-	route1[1] = city2
-	route1[2] = city1
-
-	route2[1] = city3
-	route2[2] = city1
-	route2[3] = city2
+	route2[startCityIndex + 1] = city3			#1 & 2 & 3
+	route2[startCityIndex + 2] = city1
+	route2[startCityIndex + 3] = city2
 
 	return route1 , route2
 
 
 predictedPath = []	#store visited cities
 
-agent1_state = "8"
+agent1_state = "0"
 agent2_state = "9"
 initialStateAdded = False
 
@@ -84,7 +89,7 @@ print("agent1_state recieved is ",agent1_state)
 print("agent2_state recieved is ",agent2_state)
 print("states are ",agent1_state , agent2_state)
 
-while (len(predictedPath) < 11):
+while (len(predictedPath) < 6):
 	
 	if(initialStateAdded == False):			#add initial state in visited[]
 		predictedPath.append(int(agent1_state))
@@ -95,22 +100,36 @@ while (len(predictedPath) < 11):
 	predictedPath.append(goToCity)			#add target city in visited[]
 
 print(predictedPath)
-
 finalCost = findCostOfTravel(predictedPath)
 print("total cost ",finalCost)
 
-route1 , route2 = swapper(predictedPath)
+bestCost = finalCost									#Find best cost
+bestRoute = predictedPath.copy()						#store best route
 
-print("route 1 is",route1)
-print("route 2 is",route2)
+for i in range(0 , 3):
+	route1 , route2 = swapper(predictedPath , i , i+3)
 
-finalCost = findCostOfTravel(route1)
-print("total cost of route1" , finalCost)
+	print("route 1 is",route1)
+	print("route 2 is",route2)
 
-finalCost = findCostOfTravel(route2)
-print("total cost of route 2" , finalCost)
+	cost1 = findCostOfTravel(route1)
+	cost2 = findCostOfTravel(route2)
 
+	print("total cost of route1" , cost1)
+	print("total cost of route 2" , cost2)
 
+	if(cost1 < cost2):
+		if(cost1 < bestCost):
+			bestCost = cost1
+			bestRoute = route1.copy()
+
+	elif(cost2 < cost1):
+		if(cost2 < bestCost):
+			bestCost = cost2
+			bestRoute = route2.copy()
+
+print("Best Cost is" , bestCost)
+print("Best route is" , bestRoute)
 
 
 

@@ -51,28 +51,30 @@ def findCostOfTravel(route):
 	cost = 0
 	for i in range(len(route) - 1):
 		row_data = df.loc[route[i] , "dist0" : "dist5"]
+		if(row_data[route[i + 1]] == 0):					#if there is no path between cities
+			return 9999
 		cost += row_data[route[i+1]]
 
 	return cost
 
-def swapper(route , startCity , endCity):	#modify this
-	print("startCity is ",startCity)
-	print("endCity is ",endCity)
+def swapper(route , startCityIndex , endCityIndex):
+	print("startCity is ",startCityIndex)
+	print("endCity is ",endCityIndex)
 
 	route1 = route.copy()
 	route2 = route.copy()
 
-	city0 = route[i]
-	city1 = route[i+1]
-	city2 = route[i+2]
-	city3 = route[i+3]
+	city0 = route[startCityIndex]
+	city1 = route[startCityIndex+1]
+	city2 = route[startCityIndex+2]
+	city3 = route[startCityIndex+3]
+	print("Cities are  ",city0 , city1 , city2 , city3)
+	route1[startCityIndex + 1] = city2			#1 & 2
+	route1[startCityIndex + 2] = city1
 
-	route1[1] = city2		#maybe
-	route1[2] = city1
-
-	route2[1] = city3
-	route2[2] = city1
-	route2[3] = city2
+	route2[startCityIndex + 1] = city3			#1 & 2 & 3
+	route2[startCityIndex + 2] = city1
+	route2[startCityIndex + 3] = city2
 
 	return route1 , route2
 
@@ -98,9 +100,11 @@ while (len(predictedPath) < 6):
 	predictedPath.append(goToCity)			#add target city in visited[]
 
 print(predictedPath)
-
 finalCost = findCostOfTravel(predictedPath)
 print("total cost ",finalCost)
+
+bestCost = finalCost									#Find best cost
+bestRoute = predictedPath.copy()						#store best route
 
 for i in range(0 , 3):
 	route1 , route2 = swapper(predictedPath , i , i+3)
@@ -113,6 +117,19 @@ for i in range(0 , 3):
 
 	print("total cost of route1" , cost1)
 	print("total cost of route 2" , cost2)
+
+	if(cost1 < cost2):
+		if(cost1 < bestCost):
+			bestCost = cost1
+			bestRoute = route1.copy()
+
+	elif(cost2 < cost1):
+		if(cost2 < bestCost):
+			bestCost = cost2
+			bestRoute = route2.copy()
+
+print("Best Cost is" , bestCost)
+print("Best route is" , bestRoute)
 
 
 
