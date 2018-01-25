@@ -37,7 +37,7 @@ Files info:-
 
 To Do:-
       
-      Before going for Hyper-heuristic,check everything works correctly.
+      Before going for Hyper-heuristic,make all heuristics methods send & recieve messages properly.
       
 
 
