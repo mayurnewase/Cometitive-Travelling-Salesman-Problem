@@ -13,7 +13,7 @@ def findNearestNeighbour(currentCityId , visited):
 		#currentCityId : current city of agent
 		#visited : visited array
 	
-	dist = df.loc[currentCityId,"dist0":"dist10"]			#fetch distance values for current city
+	dist = df.loc[currentCityId,"dist0":"dist5"]			#fetch distance values for current city
 	print("distance matrix of ",currentCityId , " is \n" ,dist)
 	print("Visited array " , visited)
 
@@ -50,7 +50,7 @@ def findCostOfTravel(route):
 
 	cost = 0
 	for i in range(len(route) - 1):
-		row_data = df.loc[route[i] , "dist0" : "dist10"]
+		row_data = df.loc[route[i] , "dist0" : "dist5"]
 		if(row_data[route[i + 1]] == 0):					#if there is no path between cities
 			return 9999
 		cost += row_data[route[i+1]]

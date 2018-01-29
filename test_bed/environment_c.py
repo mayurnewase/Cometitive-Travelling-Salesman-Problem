@@ -35,6 +35,19 @@ def drawCircle(x , y , r = 9):
 for i in range (11):			#draw each city.(co-ordinates stored in X_pos and Y_pos)
 	drawCircle(X_pos[i] , Y_pos[i])
 
+#b=0
+#for i in range(20):
+#	w.create_line(0,b,width=1,fill='black')
+#	w.create_line(b,0,width=1,fill='black')
+#	b+=1
+
+
+#Grid
+for i in range(0, 900, 13):
+	w.create_line([(i, 0), (i, 900)], fill='black')
+for i in range(0, 900, 13):
+	w.create_line([(0, i), (900, i)], fill='black')
+
 
 def drawAxis(width , height):
 	#draw axis (x,y) along 2 sides of canvas
@@ -80,16 +93,17 @@ for i in id:		#draw connectivity
 agent1_state = 8	#take initial states of agents
 agent2_state = 9
 
-def showAgentState(x , y, r = 9):
+def showAgentState(x , y, string, r = 9):
 	#show cirrent agent states in canvas by changing color of cities
 	#this basically create new circle over existing city with different color.
 	#coz we cant change only color of already drawn circle
 
-	id = w.create_oval(x-r , y-r , x+r , y+r , fill = "red")
+	id = w.create_oval(x-r , y-r , x+r , y+r , fill = string)
 
-
-showAgentState(X_pos[agent1_state] , Y_pos[agent1_state])
-showAgentState(X_pos[agent2_state] , Y_pos[agent2_state])
+string1="yellow"
+string2="green"
+showAgentState(X_pos[agent1_state] , Y_pos[agent1_state],string1)
+showAgentState(X_pos[agent2_state] , Y_pos[agent2_state],string2)
 
 ##Agent movement---------------------------------------------------------------------------
 
@@ -106,16 +120,27 @@ def moveToCityId(agentNo , cityId , agent1_state , agent2_state):
 		#new states of both agents
 
 	if(agentNo == 1):
-		drawCircle(X_pos[agent1_state] , Y_pos[agent1_state])		#make current blue	
+		w.create_line(X_pos[cityId],Y_pos[cityId],X_pos[agent1_state],Y_pos[agent1_state],width=2,fill='yellow')
 		agent1_state = cityId 										#update state
+		if(agent1_state!=agent2_state):
+			string='yellow'
+			showAgentState(X_pos[cityId] , Y_pos[cityId], string)
+		else:
+			string='purple'
+			showAgentState(X_pos[cityId] , Y_pos[cityId], string)
+		
 	elif(agentNo == 2):
-		drawCircle(X_pos[agent2_state] , Y_pos[agent2_state])		#make current blue	
+		w.create_line(X_pos[cityId],Y_pos[cityId],X_pos[agent2_state],Y_pos[agent2_state],width=2,fill='green')	
 		agent2_state = cityId 										#update state
+		if(agent1_state!=agent2_state):
+			string='green'
+			showAgentState(X_pos[cityId] , Y_pos[cityId], string)
+		else:
+			string='red'
+			showAgentState(X_pos[cityId] , Y_pos[cityId], string)
 	
-	showAgentState(X_pos[cityId] , Y_pos[cityId])					#make target city red
 
 	return agent1_state , agent2_state
-	
 print("Current city of agent 1 is" , agent1_state)
 print("Current city of agent 2 is" , agent2_state)
 
@@ -168,9 +193,10 @@ def initServer():
 	listener2 = Listener(address2 , authkey = b'password')
 
 	conn = listener.accept()
-	print ('connection accepted from listener', listener.last_accepted)
 	conn2 = listener2.accept()
-	print ('connection accepted from listener2', listener2.last_accepted)
+
+	print ('connection accepted from listener', listener.last_accepted)
+	#print ('connection accepted from listener2', listener2.last_accepted)
 
 	return conn , conn2
 
@@ -215,8 +241,6 @@ while True:
 	msg2 = conn2.recv()			#get move from agent2
 	msg2 = str(msg2)
 	print("Agent 2 going to " + msg2)
-
-	conn.send(int(msg2))
 
 	agent1_state , agent2_state = moveToCityId(1 , int(msg) , agent1_state , agent2_state)
 	agent1_state , agent2_state = moveToCityId(2 , int(msg2) , agent1_state , agent2_state)

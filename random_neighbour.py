@@ -53,6 +53,7 @@ while(len(visited) < 11):
 	#visited.append(newCity)
 
 	conn.send(newCity)
+	agent2_target = str(conn.recv())
 	print("visited array is ",visited)
 
 	input("")

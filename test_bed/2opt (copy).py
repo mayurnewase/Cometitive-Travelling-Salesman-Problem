@@ -2,10 +2,12 @@ from multiprocessing.connection import Client
 import pandas as pd
 import time
 
+
+address = ('localhost', 6000)
+#conn = Client(address, authkey=b'secret password')
+
 csv_file_path = "distanceFile.csv"
 df = pd.read_csv(csv_file_path)
-address = ('localhost', 6000)
-conn = Client(address, authkey=b'secret password')
 
 def findNearestNeighbour(currentCityId , visited):
 	#find neirest unvisited city to visit
@@ -13,7 +15,7 @@ def findNearestNeighbour(currentCityId , visited):
 		#currentCityId : current city of agent
 		#visited : visited array
 	
-	dist = df.loc[currentCityId,"dist0":"dist10"]			#fetch distance values for current city
+	dist = df.loc[currentCityId,"dist0":"dist5"]			#fetch distance values for current city
 	print("distance matrix of ",currentCityId , " is \n" ,dist)
 	print("Visited array " , visited)
 
@@ -50,7 +52,7 @@ def findCostOfTravel(route):
 
 	cost = 0
 	for i in range(len(route) - 1):
-		row_data = df.loc[route[i] , "dist0" : "dist10"]
+		row_data = df.loc[route[i] , "dist0" : "dist5"]
 		if(row_data[route[i + 1]] == 0):					#if there is no path between cities
 			return 9999
 		cost += row_data[route[i+1]]
@@ -68,9 +70,7 @@ def swapper(route , startCityIndex , endCityIndex):
 	city1 = route[startCityIndex+1]
 	city2 = route[startCityIndex+2]
 	city3 = route[startCityIndex+3]
-
 	print("Cities are  ",city0 , city1 , city2 , city3)
-	
 	route1[startCityIndex + 1] = city2			#1 & 2
 	route1[startCityIndex + 2] = city1
 
@@ -82,69 +82,60 @@ def swapper(route , startCityIndex , endCityIndex):
 
 
 predictedPath = []	#store visited cities
-visited = []
-#agent1_state = "0"
-#agent2_state = "9"
+
+agent1_state = "0"
+agent2_state = "9"
 initialStateAdded = False
 
-#print("agent1_state recieved is ",agent1_state)
-#print("agent2_state recieved is ",agent2_state)
-#print("states are ",agent1_state , agent2_state)
+print("agent1_state recieved is ",agent1_state)
+print("agent2_state recieved is ",agent2_state)
+print("states are ",agent1_state , agent2_state)
 
-while(len(visited) < 11):
+while (len(predictedPath) < 6):
 	
-	initialStateAdded = False
-	agent1_state = str(conn.recv())
-	agent2_state = str(conn.recv())
-	visited = conn.recv()
-	predictedPath = []
-	
+	if(initialStateAdded == False):			#add initial state in visited[]
+		predictedPath.append(int(agent1_state))
+		initialStateAdded = True
 
-	while (len(predictedPath) < 6):
-		
-		if(initialStateAdded == False):			#add initial state in visited[]
-			predictedPath.append(int(agent1_state))
-			initialStateAdded = True
+	goToCity = findNearestNeighbour(int(agent1_state) , predictedPath)	#find target city
+	agent1_state = goToCity
+	predictedPath.append(goToCity)			#add target city in visited[]
 
-		goToCity = findNearestNeighbour(int(agent1_state) , visited)	#find target city
-		agent1_state = goToCity
-		predictedPath.append(goToCity)			#add target city in visited[]
+print(predictedPath)
+finalCost = findCostOfTravel(predictedPath)
+print("total cost ",finalCost)
 
-	print(predictedPath)
-	finalCost = findCostOfTravel(predictedPath)
-	print("total cost ",finalCost)
+bestCost = finalCost									#Find best cost
+bestRoute = predictedPath.copy()						#store best route
 
-	bestCost = finalCost									#Find best cost
-	bestRoute = predictedPath.copy()						#store best route
+for i in range(0 , 3):
+	route1 , route2 = swapper(predictedPath , i , i+3)
 
-	for i in range(0 , 3):
-		route1 , route2 = swapper(predictedPath , i , i+3)
+	print("route 1 is",route1)
+	print("route 2 is",route2)
 
-		print("route 1 is",route1)
-		print("route 2 is",route2)
+	cost1 = findCostOfTravel(route1)
+	cost2 = findCostOfTravel(route2)
 
-		cost1 = findCostOfTravel(route1)
-		cost2 = findCostOfTravel(route2)
+	print("total cost of route1" , cost1)
+	print("total cost of route 2" , cost2)
 
-		print("total cost of route1" , cost1)
-		print("total cost of route 2" , cost2)
+	if(cost1 < cost2):
+		if(cost1 < bestCost):
+			bestCost = cost1
+			bestRoute = route1.copy()
 
-		if(cost1 < cost2):
-			if(cost1 < bestCost):
-				bestCost = cost1
-				bestRoute = route1.copy()
+	elif(cost2 < cost1):
+		if(cost2 < bestCost):
+			bestCost = cost2
+			bestRoute = route2.copy()
 
-		elif(cost2 < cost1):
-			if(cost2 < bestCost):
-				bestCost = cost2
-				bestRoute = route2.copy()
+print("Best Cost is" , bestCost)
+print("Best route is" , bestRoute)
 
-	print("Best Cost is" , bestCost)
-	print("Best route is" , bestRoute)
 
-	#send first city of best route
-	conn.send(bestRoute[0])
-	input("")
+
+
 
 
 

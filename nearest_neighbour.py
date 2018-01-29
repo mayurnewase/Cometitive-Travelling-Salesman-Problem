@@ -55,20 +55,22 @@ initialStateAdded = False	#add initial only for first time
 while (len(visited) <= 11):
 	agent1_state = str(conn.recv())			#get states from environment
 	agent2_state = str(conn.recv())
+	visited = conn.recv()
 
 	print("agent1_state recieved is ",agent1_state)
 	print("agent2_state recieved is ",agent2_state)
 	print("states are ",agent1_state , agent2_state)
 	
-	if(initialStateAdded == False):			#add initial state in visited[]
-		visited.append(int(agent1_state))
-		initialStateAdded = True
+	#if(initialStateAdded == False):			#add initial state in visited[]
+	#	visited.append(int(agent1_state))
+	#	initialStateAdded = True
 
 	goToCity = findNearestNeighbour(int(agent1_state)  , visited)	#find target city
 	
-	visited.append(goToCity)			#add target city in visited[]
+	#visited.append(goToCity)			#add target city in visited[]
 	
 	conn.send(goToCity)
+	agent2_target = str(conn.recv())
 	#time.sleep(7)
 	input("")
 	j += 1

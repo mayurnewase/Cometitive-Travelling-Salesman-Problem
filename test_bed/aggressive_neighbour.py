@@ -10,7 +10,7 @@ df = pd.read_csv(csv_file_path)
 
 def findNearestNeighbour(currentCityId , visited):
 	
-	dist = df.loc[currentCityId,"dist0":"dist10"]
+	dist = df.loc[currentCityId,"dist0":"dist5"]
 	print("distance matrix of ", currentCityId , " is \n" ,dist)
 	
 	print("Visited array " , visited)
@@ -64,19 +64,19 @@ while (len(visited) <= 11):
 	#visited.append(goToCity)
 	print("found nearestCity ",nearestCity)
 	#cost for agent 2 current state -> nearest neighbour
-	row_data = df.loc[int(agent2_state) , "dist0":"dist10"]
+	row_data = df.loc[int(agent2_state) , "dist0":"dist5"]
 	cost1 = row_data[nearestCity]
-	print("agent 2 current state [",agent2_state  , "] -> nearest neighbour [",nearestCity,"]" , cost1)
+	print("agent 2 current state -> nearest neighbour" , cost1)
 
 	#cost for agent 2's current state -> agent 1's target city
-	row_data = df.loc[int(agent2_state) , "dist0":"dist10"]
+	row_data = df.loc[int(agent2_state) , "dist0":"dist5"]
 	cost2 = row_data[int(agent1_target)]
-	print("agent 2 current state [" , agent2_state ,"] -> agent 1's target [",agent1_target ,"]", cost2)
+	print("agent 2 current state -> agent 1's target" , cost2)
 	
 	#cost for agent 1's current state -> agent 1's target city
-	row_data = df.loc[int(agent1_state) , "dist0":"dist10"]
+	row_data = df.loc[int(agent1_state) , "dist0":"dist5"]
 	cost3 = row_data[int(agent1_target)]
-	print("agent 1 current state [" , agent1_state , "] -> agent 1's target [",agent1_target ,"]", cost3)
+	print("agent 1 current state -> agent 1's target cost" , cost3)
 
 	if(cost2 < cost3):				#Aggressive agent can reach others target early
 		goToCity = agent1_target

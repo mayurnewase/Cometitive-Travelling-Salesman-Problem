@@ -32,7 +32,7 @@ def drawCircle(x , y , r = 9):
 	return id
 
 
-for i in range (11):			#draw each city.(co-ordinates stored in X_pos and Y_pos)
+for i in range (6):			#draw each city.(co-ordinates stored in X_pos and Y_pos)
 	drawCircle(X_pos[i] , Y_pos[i])
 
 
@@ -68,8 +68,8 @@ def drawConnectivity(city1_X , city1_Y , city2_X , city2_Y):
 
 for i in id:		#draw connectivity
 	j=i+1
-	while (j <11):
-		#drawConnectivity(X_pos[i] , Y_pos[i] , X_pos[j] , Y_pos[j])
+	while (j <6):
+		drawConnectivity(X_pos[i] , Y_pos[i] , X_pos[j] , Y_pos[j])
 		j += 1
 
 
@@ -77,8 +77,8 @@ for i in id:		#draw connectivity
 #cities_id = df.id
 #print(cities_id)
 
-agent1_state = 8	#take initial states of agents
-agent2_state = 9
+agent1_state = 0	#take initial states of agents
+agent2_state = 5
 
 def showAgentState(x , y, r = 9):
 	#show cirrent agent states in canvas by changing color of cities
@@ -168,9 +168,10 @@ def initServer():
 	listener2 = Listener(address2 , authkey = b'password')
 
 	conn = listener.accept()
-	print ('connection accepted from listener', listener.last_accepted)
 	conn2 = listener2.accept()
-	print ('connection accepted from listener2', listener2.last_accepted)
+
+	print ('connection accepted from listener', listener.last_accepted)
+	#print ('connection accepted from listener2', listener2.last_accepted)
 
 	return conn , conn2
 
@@ -216,8 +217,6 @@ while True:
 	msg2 = str(msg2)
 	print("Agent 2 going to " + msg2)
 
-	conn.send(int(msg2))
-
 	agent1_state , agent2_state = moveToCityId(1 , int(msg) , agent1_state , agent2_state)
 	agent1_state , agent2_state = moveToCityId(2 , int(msg2) , agent1_state , agent2_state)
 	print("new agent1_state is " , agent1_state)
@@ -225,8 +224,8 @@ while True:
 	print("-----------------------------------------------")
 
 	if(agent1_state != agent2_state):
-		benifit[0] += 10
-		benifit[1] += 10
+		benifit[0] += 1
+		benifit[1] += 1
 
 	else:
 		df2 = df.loc[prev1_state , "dist0":"dist10"]
@@ -238,9 +237,9 @@ while True:
 		print("Agent 2 transition cost " , cost2)
 
 		if(cost1 < cost2):
-			benifit[0] += 10
+			benifit[0] += 1
 		else:
-			benifit[1] += 10
+			benifit[1] += 1
 
 	updateAgentData(benifit)
 	visited.append(agent1_state)
