@@ -1,11 +1,11 @@
 from multiprocessing.connection import Client
 import pandas as pd
 import time
-address = ('localhost', 6000)
-#conn = Client(address, authkey=b'secret password')
 
 csv_file_path = "distanceFile.csv"
 df = pd.read_csv(csv_file_path)
+address = ('localhost', 6000)
+conn = Client(address, authkey=b'secret password')
 
 def findNearestNeighbour(currentCityId , visited):
 	#find neirest unvisited city to visit
@@ -13,7 +13,7 @@ def findNearestNeighbour(currentCityId , visited):
 		#currentCityId : current city of agent
 		#visited : visited array
 	
-	dist = df.loc[currentCityId,"dist0":"dist5"]			#fetch distance values for current city
+	dist = df.loc[currentCityId,"dist0":"dist10"]			#fetch distance values for current city
 	print("distance matrix of ",currentCityId , " is \n" ,dist)
 	print("Visited array " , visited)
 
@@ -50,7 +50,7 @@ def findCostOfTravel(route):
 
 	cost = 0
 	for i in range(len(route) - 1):
-		row_data = df.loc[route[i] , "dist0" : "dist5"]
+		row_data = df.loc[route[i] , "dist0" : "dist10"]
 		if(row_data[route[i + 1]] == 0):					#if there is no path between cities
 			return 9999
 		cost += row_data[route[i+1]]
@@ -68,7 +68,9 @@ def swapper(route , startCityIndex , endCityIndex):
 	city1 = route[startCityIndex+1]
 	city2 = route[startCityIndex+2]
 	city3 = route[startCityIndex+3]
+
 	print("Cities are  ",city0 , city1 , city2 , city3)
+	
 	route1[startCityIndex + 1] = city2			#1 & 2
 	route1[startCityIndex + 2] = city1
 
@@ -80,16 +82,25 @@ def swapper(route , startCityIndex , endCityIndex):
 
 
 predictedPath = []	#store visited cities
-
-agent1_state = "0"
-agent2_state = "9"
+visited = []
+#agent1_state = "0"
+#agent2_state = "9"
 initialStateAdded = False
 
-print("agent1_state recieved is ",agent1_state)
-print("agent2_state recieved is ",agent2_state)
-print("states are ",agent1_state , agent2_state)
+#print("agent1_state recieved is ",agent1_state)
+#print("agent2_state recieved is ",agent2_state)
+#print("states are ",agent1_state , agent2_state)
 
-while (len(predictedPath) < 6):
+#while(len(visited) < 11):		#commented to make this agent dumb(calculate full path only once)...
+
+initialStateAdded = False
+agent1_state = str(conn.recv())
+agent2_state = str(conn.recv())
+visited = conn.recv()
+predictedPath = []
+
+
+while (len(predictedPath) < 11):
 	
 	if(initialStateAdded == False):			#add initial state in visited[]
 		predictedPath.append(int(agent1_state))
@@ -106,7 +117,7 @@ print("total cost ",finalCost)
 bestCost = finalCost									#Find best cost
 bestRoute = predictedPath.copy()						#store best route
 
-for i in range(0 , 3):
+for i in range(0 , 8):
 	route1 , route2 = swapper(predictedPath , i , i+3)
 
 	print("route 1 is",route1)
@@ -131,10 +142,12 @@ for i in range(0 , 3):
 print("Best Cost is" , bestCost)
 print("Best route is" , bestRoute)
 
+#send first city of best route
+for i in range(1 , len(bestRoute)):				#dont send first city again->coz it's current state and is already visited
+	conn.send(bestRoute[i])
+	input("")
 
 
-
-
-
+#[8, 9, 2, 10, 1, 4, 6, 7, 0, 3, 5]
 
 

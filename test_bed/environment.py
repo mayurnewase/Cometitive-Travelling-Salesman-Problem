@@ -8,7 +8,7 @@ from multiprocessing.connection import Listener
 
 
 #csv handling-----------------------------------------------------
-csv_file_path = "distanceFile.csv"
+csv_file_path = "distanceFileTen.csv"
 df = pd.read_csv(csv_file_path)	#read csv
 X_pos = df.x_pos 				#read x co-ordinates
 Y_pos = df.y_pos 				#read y co-ordinates
@@ -32,7 +32,7 @@ def drawCircle(x , y , r = 9):
 	return id
 
 
-for i in range (11):			#draw each city.(co-ordinates stored in X_pos and Y_pos)
+for i in range (6):			#draw each city.(co-ordinates stored in X_pos and Y_pos)
 	drawCircle(X_pos[i] , Y_pos[i])
 
 
@@ -68,7 +68,7 @@ def drawConnectivity(city1_X , city1_Y , city2_X , city2_Y):
 
 for i in id:		#draw connectivity
 	j=i+1
-	while (j <11):
+	while (j <6):
 		#drawConnectivity(X_pos[i] , Y_pos[i] , X_pos[j] , Y_pos[j])
 		j += 1
 
@@ -180,7 +180,7 @@ def giveInfoToAgent(conn , conn2 ,agent1_state , agent2_state , visited):
 
 	conn.send(agent1_state)
 	conn.send(agent2_state)
-	conn.send(visited)
+	#conn.send(visited)
 
 	conn2.send(agent1_state)
 	conn2.send(agent2_state)
@@ -188,8 +188,6 @@ def giveInfoToAgent(conn , conn2 ,agent1_state , agent2_state , visited):
 
 conn , conn2 = initServer()
 
-
-	
 
 visited = []
 benifit = [0] * 2
@@ -216,8 +214,6 @@ while True:
 	msg2 = str(msg2)
 	print("Agent 2 going to " + msg2)
 
-	conn.send(int(msg2))
-
 	agent1_state , agent2_state = moveToCityId(1 , int(msg) , agent1_state , agent2_state)
 	agent1_state , agent2_state = moveToCityId(2 , int(msg2) , agent1_state , agent2_state)
 	print("new agent1_state is " , agent1_state)
@@ -225,10 +221,8 @@ while True:
 	print("-----------------------------------------------")
 
 	if(agent1_state != agent2_state):
-		if(agent1_state not in visited):
-			benifit[0] += 10
-		if(agent2_state not in visited):
-			benifit[1] += 10
+		benifit[0] += 1
+		benifit[1] += 1
 
 	else:
 		df2 = df.loc[prev1_state , "dist0":"dist10"]
@@ -240,12 +234,9 @@ while True:
 		print("Agent 2 transition cost " , cost2)
 
 		if(cost1 < cost2):
-			benifit[0] += 10
-		elif(cost1 > cost2):
-			benifit[1] += 10
-		elif(cost1 == cost2):	#sharing benifit
-			benifit[0] += 5
-			benifit[1] += 5
+			benifit[0] += 1
+		else:
+			benifit[1] += 1
 
 	updateAgentData(benifit)
 	visited.append(agent1_state)

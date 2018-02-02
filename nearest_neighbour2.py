@@ -1,7 +1,7 @@
 from multiprocessing.connection import Client
 import pandas as pd
 import time
-address = ('localhost', 6000)
+address = ('localhost', 7000)
 conn = Client(address, authkey=b'secret password')
 
 csv_file_path = "distanceFile.csv"
@@ -65,7 +65,7 @@ while (len(visited) <= 11):
 	#	visited.append(int(agent1_state))
 	#	initialStateAdded = True
 
-	goToCity = findNearestNeighbour(int(agent1_state)  , visited)	#find target city
+	goToCity = findNearestNeighbour(int(agent2_state)  , visited)	#find target city
 	
 	#visited.append(goToCity)			#add target city in visited[]
 	
