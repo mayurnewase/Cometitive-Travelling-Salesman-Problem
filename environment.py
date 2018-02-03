@@ -77,8 +77,8 @@ for i in id:		#draw connectivity
 #cities_id = df.id
 #print(cities_id)
 
-agent1_state = 8	#take initial states of agents
-agent2_state = 9
+agent1_state = 9	#take initial states of agents
+agent2_state = 8
 
 def showAgentState(x , y, r = 9):
 	#show cirrent agent states in canvas by changing color of cities

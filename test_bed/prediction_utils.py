@@ -146,12 +146,11 @@ class twoOpt:
 		self.twoOptAgentState = twoOptAgentState
 		
 		
-
 	def findNearestNeighbour(self , currentCityId , visited):
 		
 		dist = self.df.loc[currentCityId,"dist0":"dist10"]			#fetch distance values for current city
-		print("distance matrix of ",currentCityId , " is \n" ,dist)
-		print("Visited array " , visited)
+		#print("distance matrix of ",currentCityId , " is \n" ,dist)
+		#print("Visited array " , visited)
 
 		toCheck = []			#this array will store all city ids except current city.so agent can visit them.This is important coz distance of city to same city is 0.so agent may select this every time causing infinite loop.
 		
@@ -161,7 +160,7 @@ class twoOpt:
 				#min = dist[i]
 				#cityIndex = i + 1
 				toCheck.append(cityIndex)		#changed
-		print("toCheck array " , toCheck)
+		#print("toCheck array " , toCheck)
 
 		unVisited = []			#this array will contain unvisited cities ids
 
@@ -169,7 +168,7 @@ class twoOpt:
 			if city not in visited:
 				unVisited.append(city)
 
-		print("unVisited array " , unVisited)
+		#print("unVisited array " , unVisited)
 
 		minDist = 9999
 		for city in unVisited:			#now find nearest city
@@ -178,8 +177,8 @@ class twoOpt:
 				#print("city equaling to visit" , city)
 				cityToVisit = city
 
-		print("cityToVisit " , cityToVisit)
-		print("====================================")
+		#print("cityToVisit " , cityToVisit)
+		#print("====================================")
 		return cityToVisit				#return target city to visit
 
 	def findCostOfTravel(self , route):
@@ -193,8 +192,8 @@ class twoOpt:
 		return cost
 
 	def swapper(self , route , startCityIndex , endCityIndex):
-		print("startCity is ",startCityIndex)
-		print("endCity is ",endCityIndex)
+		#print("startCity is ",startCityIndex)
+		#print("endCity is ",endCityIndex)
 
 		route1 = route.copy()
 		route2 = route.copy()
