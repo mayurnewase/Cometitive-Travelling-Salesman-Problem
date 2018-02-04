@@ -38,6 +38,9 @@ class nearestNeighbour:
 			if city not in visited:
 				unVisited.append(city)
 
+		if(len(unVisited) == 0):
+			return -1
+
 		#print("unVisited array " , unVisited)
 
 		minDist = 9999
@@ -55,7 +58,8 @@ class nearestNeighbour:
 
 		predictedMove = 0
 		currentCityId = self.nearestNeighbourState
-		
+		#print("pu currentCityId is ",currentCityId)
+		#print("pu visited is ",self.visited)
 		predictedMove = self.findNearestNeighbour(currentCityId , self.visited)
 		
 		return predictedMove
@@ -202,7 +206,7 @@ class twoOpt:
 		city1 = route[startCityIndex+1]
 		city2 = route[startCityIndex+2]
 		city3 = route[startCityIndex+3]
-		print("Cities are  ",city0 , city1 , city2 , city3)
+		#print("Cities are  ",city0 , city1 , city2 , city3)
 		route1[startCityIndex + 1] = city2			#1 & 2
 		route1[startCityIndex + 2] = city1
 
@@ -229,7 +233,7 @@ class twoOpt:
 
 		print(predictedPath)
 		finalCost = self.findCostOfTravel(predictedPath)
-		print("total cost ",finalCost)
+		#print("total cost ",finalCost)
 
 		bestCost = finalCost									#Find best cost
 		bestRoute = predictedPath.copy()						#store best route
@@ -237,14 +241,14 @@ class twoOpt:
 		for i in range(0 , 8):
 			route1 , route2 = self.swapper(predictedPath , i , i+3)
 
-			print("route 1 is",route1)
-			print("route 2 is",route2)
+			#print("route 1 is",route1)
+			#print("route 2 is",route2)
 
 			cost1 = self.findCostOfTravel(route1)
 			cost2 = self.findCostOfTravel(route2)
 
-			print("total cost of route1" , cost1)
-			print("total cost of route 2" , cost2)
+			#print("total cost of route1" , cost1)
+			#print("total cost of route 2" , cost2)
 
 			if(cost1 < cost2):
 				if(cost1 < bestCost):
@@ -256,7 +260,7 @@ class twoOpt:
 					bestCost = cost2
 					bestRoute = route2.copy()
 
-		print("Best Cost is" , bestCost)
+		#print("Best Cost is" , bestCost)
 		print("Best route is" , bestRoute)
 
 		return bestRoute

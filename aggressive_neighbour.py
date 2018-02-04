@@ -1,7 +1,7 @@
 from multiprocessing.connection import Client
 import pandas as pd
 import time
-address = ('localhost', 7000)
+address = ('localhost', 6000)
 conn = Client(address, authkey=b'secret password')
 
 csv_file_path = "distanceFile.csv"
@@ -30,6 +30,9 @@ def findNearestNeighbour(currentCityId , visited):
 			unVisited.append(city)
 
 	print("unVisited array " , unVisited)
+	
+	if(len(unVisited) == 0):
+		return -1
 
 	minDist = 9999
 	for city in unVisited:
@@ -46,7 +49,8 @@ def findNearestNeighbour(currentCityId , visited):
 j=0
 visited = []
 initialStateAdded = False
-while (len(visited) <= 11):
+nearestCity = 0
+while (nearestCity != -1):
 	agent1_state = str(conn.recv())
 	agent2_state = str(conn.recv())
 	visited = conn.recv()
@@ -60,8 +64,10 @@ while (len(visited) <= 11):
 		#visited.append(int(agent1_state))
 		#initialStateAdded = True
 
-	nearestCity = findNearestNeighbour(int(agent2_state)  , visited)
+	nearestCity = findNearestNeighbour(int(agent1_state)  , visited)	#AGENT NO DEPENDENT
 	#visited.append(goToCity)
+	if(nearestCity == -1):
+		break
 	print("found nearestCity ",nearestCity)
 	#cost for agent 2 current state -> nearest neighbour
 	row_data = df.loc[int(agent2_state) , "dist0":"dist10"]
@@ -78,7 +84,7 @@ while (len(visited) <= 11):
 	cost3 = row_data[int(agent1_target)]
 	print("agent 1 current state [" , agent1_state , "] -> agent 1's target [",agent1_target ,"]", cost3)
 
-	if(agent1_target == agent2_state):				#if other dumb agent choose target same as current state of this agent,then aggressive will go to nearest city,instead of remaining in current position.
+	if(agent1_target == agent2_state):	#if other dumbass agent choose target same as current state of this agent,then aggressive will go to nearest city,instead of remaining in current position.
 		goToCity = nearestCity
 	elif(cost2 < cost3):				#Aggressive agent can reach others target early
 		goToCity = agent1_target

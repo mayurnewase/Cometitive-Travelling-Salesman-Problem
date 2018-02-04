@@ -1,7 +1,7 @@
 from multiprocessing.connection import Client
 import pandas as pd
 import time
-address = ('localhost', 6000)
+address = ('localhost', 7000)
 conn = Client(address, authkey=b'secret password')
 
 csv_file_path = "distanceFile.csv"
@@ -35,6 +35,9 @@ def findNearestNeighbour(currentCityId , visited):
 			unVisited.append(city)
 
 	print("unVisited array " , unVisited)
+	
+	if(len(unVisited) == 0):
+		return -1
 
 	minDist = 9999
 	for city in unVisited:			#now find nearest city
@@ -51,8 +54,9 @@ def findNearestNeighbour(currentCityId , visited):
 j=0				#used for looping counter
 visited = []	#store visited cities
 initialStateAdded = False	#add initial only for first time
+goToCity = 0
 
-while (len(visited) <= 11):
+while (goToCity != -1):
 	agent1_state = str(conn.recv())			#get states from environment
 	agent2_state = str(conn.recv())
 	visited = conn.recv()
@@ -65,15 +69,15 @@ while (len(visited) <= 11):
 	#	visited.append(int(agent1_state))
 	#	initialStateAdded = True
 
-	goToCity = findNearestNeighbour(int(agent1_state)  , visited)	#find target city
+	goToCity = findNearestNeighbour(int(agent2_state)  , visited)	#find target city
 	
 	#visited.append(goToCity)			#add target city in visited[]
-	
-	conn.send(goToCity)
-	agent2_target = str(conn.recv())
-	#time.sleep(7)
-	input("")
-	j += 1
+	if(goToCity != -1):
+		conn.send(goToCity)
+		agent2_target = str(conn.recv())
+		#time.sleep(7)
+		input("")
+		j += 1
 
 conn.close()		#close connection safely
 

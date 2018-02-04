@@ -103,10 +103,10 @@ predictedPath = []
 while (len(predictedPath) < 11):
 	
 	if(initialStateAdded == False):			#add initial state in visited[]
-		predictedPath.append(int(agent1_state))
+		predictedPath.append(int(agent1_state))			#AGENT NO DEPENDENT
 		initialStateAdded = True
 
-	goToCity = findNearestNeighbour(int(agent1_state) , predictedPath)	#find target city
+	goToCity = findNearestNeighbour(int(agent1_state) , predictedPath)	#AGENT NO DEPENDENT
 	agent1_state = goToCity
 	predictedPath.append(goToCity)			#add target city in visited[]
 
