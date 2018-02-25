@@ -1,6 +1,6 @@
 # Cometitive-Travelling-Salesman-Problem
 
-This is project for solving Compititive travelling salesman problem by using hyperheuristic methods.
+This is final year's project for solving Compititive travelling salesman problem by using hyperheuristic methods.
 
 Changelog:-
 	
