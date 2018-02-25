@@ -19,6 +19,7 @@ Files info:-
 
       dataset.csv file -> Contains dataset
       environent.py -> Environment for 2 agents,controlled using listeners.
+      datasetgenerator.py -> Generate random dataset for given number of cities.
 
 2.Connection Demo:-
       
@@ -27,14 +28,14 @@ Files info:-
 3.Heuristic methods:-
       
       nearest_neighbour.py -> Logic for controlling agent using NN.
-      random_neighbour.py ->Logic for controlling agent using RN.
-      aggressive_neighbour.py ->Logic for controlling agent using aggressive heuristic.
+      random_neighbour.py -> Logic for controlling agent using RN.
+      aggressive_neighbour.py -> Logic for controlling agent using aggressive heuristic.
       
 4.Hyper heuristic modules:-(inside modularized directory)
       
-      1.prediction_utils.py ->Used for reconstruction of path for predicting heuristic used by other agent.
-      2.controller.py ->(main controller)Used for controlling agents and communication with enviroment.
-      3.hyperX ->Used for predicting other agent's heuristic and find best policy against it.
+      prediction_utils.py -> Used for reconstruction of path for predicting heuristic used by other agent.
+      controller.py -> (main controller)Used for controlling agents and communication with enviroment.
+      hyperX -> Used for predicting other agent's heuristic and find best policy against it.
 
 To Do:-
       
