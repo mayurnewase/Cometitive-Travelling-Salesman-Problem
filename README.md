@@ -30,6 +30,7 @@ Files info:-
       nearest_neighbour.py -> Logic for controlling agent using NN.
       random_neighbour.py -> Logic for controlling agent using RN.
       aggressive_neighbour.py -> Logic for controlling agent using aggressive heuristic.
+      twoOpt.py -> Logic for controlling agent using 2-opt heuristic.
       
 4.Hyper heuristic modules:-(inside modularized directory)
       
