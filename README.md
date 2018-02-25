@@ -5,6 +5,7 @@ This is project for solving Compititive travelling salesman problem by using hyp
 Changelog:-
 	
 	Aggressive heuristic method completed.
+	HyperX tseting for nn completed successfully.
 
 Setup:-
 
@@ -29,7 +30,7 @@ Files info:-
       random_neighbour.py ->Logic for controlling agent using RN.
       aggressive_neighbour.py ->Logic for controlling agent using aggressive heuristic.
       
-4.Hyper heuristic modules:-
+4.Hyper heuristic modules:-(inside modularized directory)
       
       1.prediction_utils.py ->Used for reconstruction of path for predicting heuristic used by other agent.
       2.controller.py ->(main controller)Used for controlling agents and communication with enviroment.
