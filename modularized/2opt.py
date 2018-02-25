@@ -6,7 +6,7 @@ class twoOpt:
 	
 	twoOptAgentState = 0
 
-	csv_file_path = "distanceFileTen.csv"
+	csv_file_path = "distanceFileTwenty.csv"
 	df = pd.read_csv(csv_file_path)
 
 	def __init__(self , twoOptAgentState):
@@ -51,7 +51,7 @@ class twoOpt:
 	def findCostOfTravel(self , route):
 		cost = 0
 		for i in range(len(route) - 1):
-			row_data = self.df.loc[route[i] , "dist0" : "dist10"]
+			row_data = self.df.loc[route[i] , "dist0" : "dist19"]
 			if(row_data[route[i + 1]] == 0):					#if there is no path between cities
 				return 9999
 			cost += row_data[route[i+1]]
@@ -101,7 +101,7 @@ class twoOpt:
 		bestCost = finalCost									#Find best cost
 		bestRoute = predictedPath.copy()						#store best route
 
-		for i in range(0 , 8):
+		for i in range(0 , 18):
 			route1 , route2 = self.swapper(predictedPath , i , i+3)
 
 			#print("route 1 is",route1)

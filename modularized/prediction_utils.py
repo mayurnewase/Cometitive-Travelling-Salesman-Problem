@@ -3,12 +3,10 @@ import pandas as pd
 
 class nearestNeighbour:
 	nearestNeighbourState = 0
-	probability = []
 	visited = []
 
-	def __init__(self , nearestNeighbourState , probability , visited):
+	def __init__(self , nearestNeighbourState , visited):
 		self.nearestNeighbourState = nearestNeighbourState
-		self.probability = probability.copy()
 		self.visited = visited.copy()
 
 	def findNearestNeighbour(self , currentCityId , visited):
@@ -16,9 +14,9 @@ class nearestNeighbour:
 	#input->
 		#currentCityId : current city of agent
 		#visited : visited array
-		csv_file_path = "distanceFileTen.csv"
+		csv_file_path = "distanceFileTwenty.csv"
 		df = pd.read_csv(csv_file_path)	
-		dist = df.loc[currentCityId,"dist0":"dist10"]			#fetch distance values for current city
+		dist = df.loc[currentCityId,"dist0":"dist19"]			#fetch distance values for current city
 		#print("distance matrix of ",currentCityId , " is \n" ,dist)
 		#print("Visited array " , visited)
 
@@ -70,22 +68,20 @@ class aggressiveNeighbour:
 	otherAgentState = 0
 	otherAgentTarget = 0
 
-	probability = []
 	visited = []
 	
-	csv_file_path = "distanceFileTen.csv"
+	csv_file_path = "distanceFileTwenty.csv"
 	df = pd.read_csv(csv_file_path)
 
-	def __init__(self , aggressiveState , otherAgentState ,otherAgentTarget ,probability , visited):
+	def __init__(self , aggressiveState , otherAgentState ,otherAgentTarget  , visited):
 		self.aggressiveState = aggressiveState
-		self.probability = probability.copy()
 		self.visited = visited.copy()
 		self.otherAgentState = otherAgentState
 		self.otherAgentTarget = otherAgentTarget
 
 	def findNearestNeighbour(self , currentCityId , visited):
 		
-		dist = self.df.loc[currentCityId,"dist0":"dist10"]
+		dist = self.df.loc[currentCityId,"dist0":"dist19"]
 		#print("distance matrix of ", self.state , " is \n" ,dist)
 		
 		toCheck = []
@@ -119,13 +115,13 @@ class aggressiveNeighbour:
 	def driver(self):
 
 		nearestCity = self.findNearestNeighbour(self.aggressiveState  , self.visited)
-		row_data = self.df.loc[int(self.aggressiveState) , "dist0":"dist10"]
+		row_data = self.df.loc[int(self.aggressiveState) , "dist0":"dist19"]
 		cost1 = row_data[nearestCity]
 
-		row_data = self.df.loc[int(self.aggressiveState) , "dist0":"dist10"]
+		row_data = self.df.loc[int(self.aggressiveState) , "dist0":"dist19"]
 		cost2 = row_data[int(self.otherAgentTarget)]
 
-		row_data = self.df.loc[int(self.otherAgentState) , "dist0":"dist10"]
+		row_data = self.df.loc[int(self.otherAgentState) , "dist0":"dist19"]
 		cost3 = row_data[int(self.otherAgentTarget)]
 
 		if(self.otherAgentTarget == self.aggressiveState):				#if other dumb agent choose target same as current state of this agent,then aggressive will go to nearest city,instead of remaining in current position.
@@ -143,7 +139,7 @@ class twoOpt:
 	
 	twoOptAgentState = 0
 	
-	csv_file_path = "distanceFileTen.csv"
+	csv_file_path = "distanceFileTwenty.csv"
 	df = pd.read_csv(csv_file_path)
 
 	def __init__(self , twoOptAgentState):
@@ -152,7 +148,7 @@ class twoOpt:
 		
 	def findNearestNeighbour(self , currentCityId , visited):
 		
-		dist = self.df.loc[currentCityId,"dist0":"dist10"]			#fetch distance values for current city
+		dist = self.df.loc[currentCityId,"dist0":"dist19"]			#fetch distance values for current city
 		#print("distance matrix of ",currentCityId , " is \n" ,dist)
 		#print("Visited array " , visited)
 
@@ -173,7 +169,9 @@ class twoOpt:
 				unVisited.append(city)
 
 		#print("unVisited array " , unVisited)
-
+		if(len(unVisited) == 0):
+			return -1
+		
 		minDist = 9999
 		for city in unVisited:			#now find nearest city
 			if (dist[city] < minDist):
@@ -188,7 +186,7 @@ class twoOpt:
 	def findCostOfTravel(self , route):
 		cost = 0
 		for i in range(len(route) - 1):
-			row_data = self.df.loc[route[i] , "dist0" : "dist10"]
+			row_data = self.df.loc[route[i] , "dist0" : "dist19"]
 			if(row_data[route[i + 1]] == 0):					#if there is no path between cities
 				return 9999
 			cost += row_data[route[i+1]]
@@ -220,14 +218,17 @@ class twoOpt:
 		
 		predictedPath = []
 		initialStateAdded = False
+		goToCity = 0
 
-		while (len(predictedPath) < 11):
+		while (goToCity != -1):
 		
 			if(initialStateAdded == False):			#add initial state in visited[]
 				predictedPath.append(self.twoOptAgentState)
 				initialStateAdded = True
 
 			goToCity = self.findNearestNeighbour(self.twoOptAgentState , predictedPath)	#find target city
+			if(goToCity == -1):
+				break
 			self.twoOptAgentState = goToCity
 			predictedPath.append(goToCity)			#add target city in visited[]
 
@@ -238,7 +239,7 @@ class twoOpt:
 		bestCost = finalCost									#Find best cost
 		bestRoute = predictedPath.copy()						#store best route
 
-		for i in range(0 , 8):
+		for i in range(0 , 17):
 			route1 , route2 = self.swapper(predictedPath , i , i+3)
 
 			#print("route 1 is",route1)
@@ -261,7 +262,7 @@ class twoOpt:
 					bestRoute = route2.copy()
 
 		#print("Best Cost is" , bestCost)
-		print("Best route is" , bestRoute)
+		print("Best route here is" , bestRoute)
 
 		return bestRoute
 					

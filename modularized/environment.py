@@ -8,7 +8,7 @@ from multiprocessing.connection import Listener
 
 
 #csv handling-----------------------------------------------------
-csv_file_path = "distanceFileTen.csv"
+csv_file_path = "distanceFileTwenty.csv"
 df = pd.read_csv(csv_file_path)	#read csv
 X_pos = df.x_pos 				#read x co-ordinates
 Y_pos = df.y_pos 				#read y co-ordinates
@@ -17,7 +17,7 @@ id = df.id 						#read id of city
 #tkinter init-----------------------------------------------------
 master = Tk()					#initialize tkinter
 w = Canvas(master , width = 600 , height = 600)		#create canvas of size 600*600
-#w.pack()
+w.pack()
 
 #env graphics-----------------------------------------------------
 
@@ -32,7 +32,7 @@ def drawCircle(x , y , r = 9):
 	return id
 
 
-for i in range (11):			#draw each city.(co-ordinates stored in X_pos and Y_pos)
+for i in range (20):			#draw each city.(co-ordinates stored in X_pos and Y_pos)
 	drawCircle(X_pos[i] , Y_pos[i])
 
 
@@ -196,11 +196,16 @@ print("initial agent1_state is " , agent1_state)
 print("initial agent2_state is " , agent2_state)
 prev1_state = agent1_state
 prev2_state = agent2_state
-
+i = 1				#index to skip accepting info from agents per 3 steps
 while True:
-	
-	giveInfoToAgent(conn , conn2 , agent1_state , agent2_state , visited)	#send info to agents
 
+	giveInfoToAgent(conn , conn2 , agent1_state , agent2_state , visited)	#send info to agents
+	print("skipping index is ",i)
+	if(i%4 == 0):
+		i = 1
+		continue
+	i += 1
+		
 	msg = conn.recv()			#get move from agent1
 	msg = str(msg)
 	print("Agent 1 going to " + msg)
@@ -226,11 +231,11 @@ while True:
 			benifit[1] += 10
 
 	else:
-		df2 = df.loc[prev1_state , "dist0":"dist10"]
+		df2 = df.loc[prev1_state , "dist0":"dist19"]
 		cost1 = df2[agent1_state]
 		print("Agent 1 transition cost " , cost1)
 
-		df2 = df.loc[prev2_state , "dist0":"dist10"]
+		df2 = df.loc[prev2_state , "dist0":"dist19"]
 		cost2 = df2[agent2_state]
 		print("Agent 2 transition cost " , cost2)
 

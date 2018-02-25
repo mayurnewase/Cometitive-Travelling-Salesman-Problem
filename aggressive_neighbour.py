@@ -1,29 +1,27 @@
 from multiprocessing.connection import Client
 import pandas as pd
 import time
+class aggressiveNeighbour:
+	aggressiveState = 0
+	otherAgentState = 0
+	otherAgentTarget = 0
 
-class an:
-	address = ('localhost', 6000)
-	conn = Client(address, authkey=b'secret password')
-
-	csv_file_path = "distanceFile.csv"
-	df = pd.read_csv(csv_file_path)
-	
-	thisState = 0
-	otherState = 0
 	visited = []
-	def __init__(self , thisState , otherState , visited):
-		self.thisState = thisState
-		self.otherState = otherState
+	
+	csv_file_path = "distanceFileTwenty.csv"
+	df = pd.read_csv(csv_file_path)
+
+	def __init__(self , aggressiveState , otherAgentState , otherAgentTarget , visited):
+		self.aggressiveState = aggressiveState
 		self.visited = visited.copy()
+		self.otherAgentState = otherAgentState
+		self.otherAgentTarget = otherAgentTarget
 
-
-	def findNearestNeighbour(currentCityId , visited):
+	def findNearestNeighbour(self , currentCityId , visited):
 		
-		dist = df.loc[currentCityId,"dist0":"dist10"]
-		print("distance matrix of ", currentCityId , " is \n" ,dist)
+		dist = self.df.loc[currentCityId,"dist0":"dist19"]
+		#print("distance matrix of ", self.state , " is \n" ,dist)
 		
-		print("Visited array " , visited)
 		toCheck = []
 		min = 9999
 		for cityIndex in range(len(dist)):
@@ -31,7 +29,7 @@ class an:
 				#min = dist[i]
 				#cityIndex = i + 1
 				toCheck.append(cityIndex)		#changed
-		print("toCheck array " , toCheck)
+		#print("toCheck array " , toCheck)
 
 		unVisited = []
 
@@ -39,8 +37,7 @@ class an:
 			if city not in visited:
 				unVisited.append(city)
 
-		print("unVisited array " , unVisited)
-		
+		#print("unVisited array " , unVisited)
 		if(len(unVisited) == 0):
 			return -1
 
@@ -48,85 +45,37 @@ class an:
 		for city in unVisited:
 			if (dist[city] < minDist):
 				minDist = dist[city]
-				print("city equaling to visit" , city)
+				#print("city equaling to visit" , city)
 				cityToVisit = city
 
 		#print("cityToVisit " , cityToVisit)
-		print("====================================")
+		#print("====================================")
 		return cityToVisit
 
-	#print (df)
-	def drive(self):
+	def driver(self):
 
-		j=0
-		visited = []
-		initialStateAdded = False
-		nearestCity = 0
-		while (nearestCity != -1):
-			agent1_state = str(conn.recv())
-			agent2_state = str(conn.recv())
-			visited = conn.recv()
-			agent1_target = str(conn.recv())
-
-			print("agent1_state recieved is ",agent1_state)
-			print("agent2_state recieved is ",agent2_state)
-			print("states are ",agent1_state , agent2_state)
+		nearestCity = self.findNearestNeighbour(self.aggressiveState  , self.visited)
+		if(nearestCity == -1):
+			return -1
 			
-			#if(initialStateAdded == False):
-				#visited.append(int(agent1_state))
-				#initialStateAdded = True
+		row_data = self.df.loc[int(self.aggressiveState) , "dist0":"dist19"]
+		cost1 = row_data[nearestCity]
 
-			nearestCity = findNearestNeighbour(int(agent1_state)  , visited)	#AGENT NO DEPENDENT
-			#visited.append(goToCity)
-			if(nearestCity == -1):
-				break
-			print("found nearestCity ",nearestCity)
-			#cost for agent 2 current state -> nearest neighbour
-			row_data = df.loc[int(agent2_state) , "dist0":"dist10"]
-			cost1 = row_data[nearestCity]
-			print("agent 2 current state [",agent2_state  , "] -> nearest neighbour [",nearestCity,"]" , cost1)
+		row_data = self.df.loc[int(self.aggressiveState) , "dist0":"dist19"]
+		cost2 = row_data[int(self.otherAgentTarget)]
 
-			#cost for agent 2's current state -> agent 1's target city
-			row_data = df.loc[int(agent2_state) , "dist0":"dist10"]
-			cost2 = row_data[int(agent1_target)]
-			print("agent 2 current state [" , agent2_state ,"] -> agent 1's target [",agent1_target ,"]", cost2)
-			
-			#cost for agent 1's current state -> agent 1's target city
-			row_data = df.loc[int(agent1_state) , "dist0":"dist10"]
-			cost3 = row_data[int(agent1_target)]
-			print("agent 1 current state [" , agent1_state , "] -> agent 1's target [",agent1_target ,"]", cost3)
+		row_data = self.df.loc[int(self.otherAgentState) , "dist0":"dist19"]
+		cost3 = row_data[int(self.otherAgentTarget)]
 
-			if(agent1_target == agent2_state):	#if other dumbass agent choose target same as current state of this agent,then aggressive will go to nearest city,instead of remaining in current position.
-				goToCity = nearestCity
-			elif(cost2 < cost3):				#Aggressive agent can reach others target early
-				goToCity = agent1_target
-				print("Ditching that nigga..... LMAO")
-			elif(cost2 >= cost3):
-				goToCity = nearestCity
-			
+		if(self.otherAgentTarget == self.aggressiveState):				#if other dumb agent choose target same as current state of this agent,then aggressive will go to nearest city,instead of remaining in current position.
+			goToCity = nearestCity
+		elif(cost2 < cost3):				#Aggressive agent can reach others target early
+			goToCity = self.otherAgentTarget	
+			print("Ditching that nigga..... LMAO")
+		elif(cost2 >= cost3):
+			goToCity = nearestCity
 
-
-			print("Going to " , goToCity)
-			conn.send(goToCity)
-			print("visited array is ",visited)
-			#time.sleep(7)
-			input("")
-			j += 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		return goToCity
 
 
 

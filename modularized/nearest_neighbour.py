@@ -14,9 +14,9 @@ class nearestNeighbour:
 	#input->
 		#currentCityId : current city of agent
 		#visited : visited array
-		csv_file_path = "distanceFileTen.csv"
+		csv_file_path = "distanceFileTwenty.csv"
 		df = pd.read_csv(csv_file_path)	
-		dist = df.loc[currentCityId,"dist0":"dist10"]			#fetch distance values for current city
+		dist = df.loc[currentCityId,"dist0":"dist19"]			#fetch distance values for current city
 		#print("distance matrix of ",currentCityId , " is \n" ,dist)
 		#print("Visited array " , visited)
 

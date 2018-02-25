@@ -8,7 +8,7 @@ from multiprocessing.connection import Listener
 
 
 #csv handling-----------------------------------------------------
-csv_file_path = "distanceFile.csv"
+csv_file_path = "distanceFileTwenty.csv"
 df = pd.read_csv(csv_file_path)	#read csv
 X_pos = df.x_pos 				#read x co-ordinates
 Y_pos = df.y_pos 				#read y co-ordinates
@@ -32,7 +32,7 @@ def drawCircle(x , y , r = 9):
 	return id
 
 
-for i in range (11):			#draw each city.(co-ordinates stored in X_pos and Y_pos)
+for i in range (20):			#draw each city.(co-ordinates stored in X_pos and Y_pos)
 	drawCircle(X_pos[i] , Y_pos[i])
 
 
@@ -68,7 +68,7 @@ def drawConnectivity(city1_X , city1_Y , city2_X , city2_Y):
 
 for i in id:		#draw connectivity
 	j=i+1
-	while (j <11):
+	while (j < 20):
 		#drawConnectivity(X_pos[i] , Y_pos[i] , X_pos[j] , Y_pos[j])
 		j += 1
 
@@ -77,8 +77,8 @@ for i in id:		#draw connectivity
 #cities_id = df.id
 #print(cities_id)
 
-agent1_state = 8	#take initial states of agents
-agent2_state = 9
+agent1_state = 7	#take initial states of agents
+agent2_state = 15
 
 def showAgentState(x , y, r = 9):
 	#show cirrent agent states in canvas by changing color of cities
@@ -210,13 +210,13 @@ while True:
 	msg = str(msg)
 	print("Agent 1 going to " + msg)
 	
-	conn2.send(int(msg))			#Give agent 1 target city to aggressive agent
+	#conn2.send(int(msg))			#Give agent 1 target city to aggressive agent
 
 	msg2 = conn2.recv()			#get move from agent2
 	msg2 = str(msg2)
 	print("Agent 2 going to " + msg2)
 
-	conn.send(int(msg2))
+	#conn.send(int(msg2))
 
 	agent1_state , agent2_state = moveToCityId(1 , int(msg) , agent1_state , agent2_state)
 	agent1_state , agent2_state = moveToCityId(2 , int(msg2) , agent1_state , agent2_state)
@@ -231,11 +231,11 @@ while True:
 			benifit[1] += 10
 
 	else:
-		df2 = df.loc[prev1_state , "dist0":"dist10"]
+		df2 = df.loc[prev1_state , "dist0":"dist19"]
 		cost1 = df2[agent1_state]
 		print("Agent 1 transition cost " , cost1)
 
-		df2 = df.loc[prev2_state , "dist0":"dist10"]
+		df2 = df.loc[prev2_state , "dist0":"dist19"]
 		cost2 = df2[agent2_state]
 		print("Agent 2 transition cost " , cost2)
 

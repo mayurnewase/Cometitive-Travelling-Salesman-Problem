@@ -1,100 +1,66 @@
 from multiprocessing.connection import Client
 import pandas as pd
 import time
-address = ('localhost', 7000)
-conn = Client(address, authkey=b'secret password')
+class nearestNeighbour:
+	nearestNeighbourState = 0
+	visited = []
 
-csv_file_path = "distanceFile.csv"
-df = pd.read_csv(csv_file_path)
+	def __init__(self , nearestNeighbourState , visited):
+		self.nearestNeighbourState = nearestNeighbourState
+		self.visited = visited.copy()
 
-
-def findNearestNeighbour(currentCityId , visited):
+	def findNearestNeighbour(self , currentCityId , visited):
 	#find neirest unvisited city to visit
 	#input->
 		#currentCityId : current city of agent
 		#visited : visited array
-	
-	dist = df.loc[currentCityId,"dist0":"dist10"]			#fetch distance values for current city
-	print("distance matrix of ",currentCityId , " is \n" ,dist)
-	print("Visited array " , visited)
+		csv_file_path = "distanceFileTwenty.csv"
+		df = pd.read_csv(csv_file_path)	
+		dist = df.loc[currentCityId,"dist0":"dist19"]			#fetch distance values for current city
+		#print("distance matrix of ",currentCityId , " is \n" ,dist)
+		#print("Visited array " , visited)
 
-	toCheck = []			#this array will store all city ids except current city.so agent can visit them.This is important coz distance of city to same city is 0.so agent may select this every time causing infinite loop.
-	
-	min = 9999
-	for cityIndex in range(len(dist)):
-		if(dist[cityIndex] != 0):			#remove current city.
-			#min = dist[i]
-			#cityIndex = i + 1
-			toCheck.append(cityIndex)		#changed
-	print("toCheck array " , toCheck)
+		toCheck = []			#this array will store all city ids except current city.so agent can visit them.This is important coz distance of city to same city is 0.so agent may select this every time causing infinite loop.
+		
+		min = 9999
+		for cityIndex in range(len(dist)):
+			if(dist[cityIndex] != 0):			#remove current city,and also filter unreachable cities(checkout in hyperX->findBestPolicy)
+				#min = dist[i]
+				#cityIndex = i + 1
+				toCheck.append(cityIndex)		#changed
+		#print("toCheck array " , toCheck)
 
-	unVisited = []			#this array will contain unvisited cities ids
+		unVisited = []			#this array will contain unvisited cities ids
 
-	for city in toCheck:
-		if city not in visited:
-			unVisited.append(city)
+		for city in toCheck:
+			if city not in visited:
+				unVisited.append(city)
 
-	print("unVisited array " , unVisited)
-	
-	if(len(unVisited) == 0):
-		return -1
+		if(len(unVisited) == 0):
+			return -1
 
-	minDist = 9999
-	for city in unVisited:			#now find nearest city
-		if (dist[city] < minDist):
-			minDist = dist[city]
-			#print("city equaling to visit" , city)
-			cityToVisit = city
+		#print("unVisited array " , unVisited)
 
-	print("cityToVisit " , cityToVisit)
-	print("====================================")
-	return cityToVisit				#return target city to visit
+		minDist = 9999
+		for city in unVisited:			#now find nearest city
+			if (dist[city] < minDist):
+				minDist = dist[city]
+				#print("city equaling to visit" , city)
+				cityToVisit = city
 
-#print (df)
-j=0				#used for looping counter
-visited = []	#store visited cities
-initialStateAdded = False	#add initial only for first time
-goToCity = 0
+		#print("cityToVisit " , cityToVisit)
+		#print("====================================")
+		return cityToVisit				#return target city to visit
 
-while (goToCity != -1):
-	agent1_state = str(conn.recv())			#get states from environment
-	agent2_state = str(conn.recv())
-	visited = conn.recv()
+	def driver(self):
 
-	print("agent1_state recieved is ",agent1_state)
-	print("agent2_state recieved is ",agent2_state)
-	print("states are ",agent1_state , agent2_state)
-	
-	#if(initialStateAdded == False):			#add initial state in visited[]
-	#	visited.append(int(agent1_state))
-	#	initialStateAdded = True
-
-	goToCity = findNearestNeighbour(int(agent2_state)  , visited)	#find target city
-	
-	#visited.append(goToCity)			#add target city in visited[]
-	if(goToCity != -1):
-		conn.send(goToCity)
-		agent2_target = str(conn.recv())
-		#time.sleep(7)
-		input("")
-		j += 1
-
-conn.close()		#close connection safely
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		predictedMove = 0
+		currentCityId = self.nearestNeighbourState
+		#print("pu currentCityId is ",currentCityId)
+		#print("pu visited is ",self.visited)
+		predictedMove = self.findNearestNeighbour(currentCityId , self.visited)
+		
+		return predictedMove
 
 
 

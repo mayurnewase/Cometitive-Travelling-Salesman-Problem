@@ -3,13 +3,14 @@ import pandas as pd
 import time
 import random
 
-from twoOpt import twoOpt
-from aggressive_neighbour import aggressiveNeighbour
+from prediction_utils import nearestNeighbour , twoOpt , aggressiveNeighbour
+#from twoOpt import twoOpt
+#from aggressive_neighbour import aggressiveNeighbour
 from random_neighbour import random
-from nearest_neighbour import nearestNeighbour
+#from nearest_neighbour import nearestNeighbour
 from hyperX import hyperXprediction
 
-csv_file_path = "distanceFileTen.csv"
+csv_file_path = "distanceFileTwenty.csv"
 df = pd.read_csv(csv_file_path)
 
 address = ('localhost', 6000)
@@ -85,7 +86,6 @@ for i in range(0 , 4):
 	elif(otherAgentPolicyForDemo == "an"):
 		nn1 = nearestNeighbour(int(agent1_state) , visited)
 		agent1_target = nn1.driver()
-
 		an2 = aggressiveNeighbour(int(agent2_state) , int(agent1_state) , agent1_target , visited)
 		agent2_target = an2.driver()
 
@@ -104,24 +104,26 @@ for i in range(0 , 4):
 	print("agent1_target in demo run " , agent1_target)
 	print("agent2_target in demo run " , agent2_target)
 	
-	giveInfoToEnv(agent1_target , agent2_target)
+	if(i != 3):
+		giveInfoToEnv(agent1_target , agent2_target)
 
-	
 	moves.append(int(agent2_state))				#store only 2nd agent's moves
 
 	agent1_state = agent1_target
 	agent2_state = agent2_target
 
+
+#moves.append(agent2_state)						#adding last state
 #print("after demo  visited is " , visited)
-while(agent1_target != -1 or agent2_target != -1):
+while(agent1_state != -1 or agent2_state != -1):
 	#find new policy from history
 	
 	hyperAgent = hyperXprediction(int(start_agent_state_1) , int(start_agent_state_2) , int(end_agent_state1) , int(end_agent_state2) , start_visited , visited , moves , hyperXPolicy)
-	bestPolicy = hyperAgent.findBestPolicy()	#REMAINING
+	bestPolicy = hyperAgent.findBestPolicy()
 	start_agent_state_1 = end_agent_state1
 	start_agent_state_2 = end_agent_state2
 	start_visited = visited.copy()
-
+	moves = []
 	#got policy
 	print("")
 	print("")
@@ -133,8 +135,12 @@ while(agent1_target != -1 or agent2_target != -1):
 	print("")
 	if(bestPolicy == "nn"):		#4 possibilities(nn vs otherAgentPolicy(nn,an,rn,to))
 		for i in range(0 , 4):
+			end_agent_state1 , end_agent_state2 = agent1_state , agent2_state
 
 			agent1_state , agent2_state , visited = takeInfoFromEnv(agent1_state , agent2_state , visited)
+			
+			if(i == 0):
+				start_agent_state_1 , start_agent_state_2 = agent1_state , agent2_state
 			
 			if(otherAgentPolicyForDemo == "nn"):
 
@@ -164,14 +170,18 @@ while(agent1_target != -1 or agent2_target != -1):
 
 			print("agent1_target is ", agent1_target)
 			print("agent2_target is ", agent2_target)
+			
+			moves.append(int(agent2_state))
+			
 			if(agent1_target == -1 or agent2_target == -1):
 				break
 
-			giveInfoToEnv(agent1_target , agent2_target)
+			if(i != 3):
+				giveInfoToEnv(agent1_target , agent2_target)
 
-			visited.append(agent1_target)
-			visited.append(agent2_target)
-			moves.append(agent2_state)				#store only 2nd agent's moves
+			#visited.append(agent1_target)
+			#visited.append(agent2_target)
+			#moves.append(int(agent2_state))				#store only 2nd agent's moves
 
 			agent1_state = agent1_target
 			agent2_state = agent2_target
@@ -196,7 +206,7 @@ while(agent1_target != -1 or agent2_target != -1):
 				agent1_target = an2.driver()				
 
 
-			elif(otherAgentPolicy == "rn"):
+			elif(otherAgentPolicyForDemo == "rn"):
 				rn2 = random(int(agent2_state) , visited)
 				agent2_target = rn2.driver()
 				an1 = aggressiveNeighbour(int(agent1_state) , int(agent2_state) , agent2_target ,visited)
@@ -224,7 +234,7 @@ while(agent1_target != -1 or agent2_target != -1):
 		agent1_path = nn1.driver()
 		twoOptPathCounter_2 = 1
 
-		for i in range(0 , 4):
+		for i in range(0 , 3):
 			agent1_state , agent2_state , visited = takeInfoFromEnv(agent1_state , agent2_state , visited)
 
 			if(otherAgentPolicyForDemo == "nn"):
@@ -272,11 +282,10 @@ while(agent1_target != -1 or agent2_target != -1):
 
 	elif(bestPolicy == "rn"):
 
-		for i in range(0 , 4):
+		for i in range(0 , 3):
 			agent1_state , agent2_state , visited = takeInfoFromEnv(agent1_state , agent2_state , visited)
 
 			if(otherAgentPolicyForDemo == "nn"):
-
 				rn1 = random(int(agent1_state) , visited)
 				nn2 = nearestNeighbour(int(agent2_state) , visited)
 				agent1_target = nn1.driver()
@@ -285,12 +294,12 @@ while(agent1_target != -1 or agent2_target != -1):
 			elif(otherAgentPolicyForDemo == "an"):
 				rn1 = random(int(agent1_state) , visited)
 				agent1_target = rn1.driver()
-
 				an2 = aggressiveNeighbour(int(agent2_state) , int(agent1_state) , int(agent1_target) , visited)
 				agent2_target = an2.driver()
 
 			elif(otherAgentPolicyForDemo == "to"):
 				agent2_target = fullPath[twoOptPathCounter]
+				twoOptPathCounter += 1
 				rn1 = random(int(agent1_state) , visited)
 				agent1_target = rn1.driver()
 
@@ -309,8 +318,8 @@ while(agent1_target != -1 or agent2_target != -1):
 			agent1_state = agent1_target
 			agent2_state = agent2_target
 
-	end_agent_state1 = agent1_state
-	end_agent_state2 = agent2_state
+	#end_agent_state1 = agent1_state
+	#end_agent_state2 = agent2_state
 
 print(visited)
 conn.close()
