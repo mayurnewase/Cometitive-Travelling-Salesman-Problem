@@ -17,7 +17,7 @@ Files info:-
 
 1.Dataset and Environment:-
 
-      dataset.csv file -> Contains dataset
+      dataset.csv files -> Contains dataset
       environent.py -> Environment for 2 agents,controlled using listeners.
       datasetgenerator.py -> Generate random dataset for given number of cities.
 
