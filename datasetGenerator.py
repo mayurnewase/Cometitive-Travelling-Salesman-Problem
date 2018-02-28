@@ -25,7 +25,7 @@ for i in range(0 , no):
 	header.append("dist" + str(i))
 
 with open('distanceFileThirty.csv', 'w') as f:
-	fieldnames = ['first_name', 'last_name']
+	
 	writer = csv.writer(f)
 	writer.writerow(header)
 	writer.writerows(arr3)
