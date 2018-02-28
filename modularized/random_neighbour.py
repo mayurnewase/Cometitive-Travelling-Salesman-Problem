@@ -6,7 +6,7 @@ import pandas as pd
 
 class random:
 	
-	csv_file_path = "distanceFileTwenty.csv"
+	csv_file_path = "distanceFileThirty.csv"
 	df = pd.read_csv(csv_file_path)
 	
 	thisState = 0
@@ -18,7 +18,7 @@ class random:
 
 	def random_neighbour(self , currentCityId , visited):
 
-		dist = self.df.loc[currentCityId,"dist0":"dist19"]
+		dist = self.df.loc[currentCityId,"dist0":"dist29"]
 		#print("distance matrix of ",currentCityId , " is \n" ,dist)
 		toCheck = []
 		unVisited = []

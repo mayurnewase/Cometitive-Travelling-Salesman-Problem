@@ -32,7 +32,7 @@ while(True):
 		print("path 1 is ",path1)
 		print("path 2 is ",path2)
 
-	policy = "nnto"
+	policy = "annn"
 
 	if(policy == "nnan"):
 
@@ -47,6 +47,7 @@ while(True):
 		agent2_target = path2[index]
 
 	elif(policy == "annn"):
+		print("an vs nn")
 		nn2 = nearestNeighbour(int(agent2_state) , visited)
 		agent2_target = nn2.driver()
 		an1 = aggressiveNeighbour(int(agent1_state) , int(agent2_state) , int(agent2_target) , visited)

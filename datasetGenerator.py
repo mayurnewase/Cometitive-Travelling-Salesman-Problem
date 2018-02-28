@@ -19,8 +19,14 @@ for i in range(0 , no):
 		arr3[i][j] = random.randint(0 , 100)
 		arr3[j-3][i+3] = arr3[i][j]
 
+header = ["id" , "x_pos" , "y_pos"]
 
-with open('distanceFileNew.csv', 'w') as f:
-    writer = csv.writer(f)
-    writer.writerows(arr3)
+for i in range(0 , no):
+	header.append("dist" + str(i))
+
+with open('distanceFileThirty.csv', 'w') as f:
+	fieldnames = ['first_name', 'last_name']
+	writer = csv.writer(f)
+	writer.writerow(header)
+	writer.writerows(arr3)
     

@@ -8,7 +8,7 @@ from multiprocessing.connection import Listener
 
 
 #csv handling-----------------------------------------------------
-csv_file_path = "distanceFileTwenty.csv"
+csv_file_path = "distanceFileThirty.csv"
 df = pd.read_csv(csv_file_path)	#read csv
 X_pos = df.x_pos 				#read x co-ordinates
 Y_pos = df.y_pos 				#read y co-ordinates
@@ -32,7 +32,7 @@ def drawCircle(x , y , r = 9):
 	return id
 
 
-for i in range (20):			#draw each city.(co-ordinates stored in X_pos and Y_pos)
+for i in range (30):			#draw each city.(co-ordinates stored in X_pos and Y_pos)
 	drawCircle(X_pos[i] , Y_pos[i])
 
 
@@ -231,11 +231,11 @@ while True:
 			benifit[1] += 10
 
 	else:
-		df2 = df.loc[prev1_state , "dist0":"dist19"]
+		df2 = df.loc[prev1_state , "dist0":"dist29"]
 		cost1 = df2[agent1_state]
 		print("Agent 1 transition cost " , cost1)
 
-		df2 = df.loc[prev2_state , "dist0":"dist19"]
+		df2 = df.loc[prev2_state , "dist0":"dist29"]
 		cost2 = df2[agent2_state]
 		print("Agent 2 transition cost " , cost2)
 

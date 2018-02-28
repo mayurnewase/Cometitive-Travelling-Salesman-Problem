@@ -10,7 +10,7 @@ from random_neighbour import random
 #from nearest_neighbour import nearestNeighbour
 from hyperX import hyperXprediction
 
-csv_file_path = "distanceFileTwenty.csv"
+csv_file_path = "distanceFileThirty.csv"
 df = pd.read_csv(csv_file_path)
 
 address = ('localhost', 6000)
@@ -20,7 +20,7 @@ address2 = ('localhost', 7000)
 conn2 = Client(address2, authkey=b'secret password')
 
 #set policy for other agent....
-otherAgentPolicyForDemo = "nn"
+otherAgentPolicyForDemo = "an"
 #For start hyperX policy will be nn.
 hyperXPolicy = "nn"
 
@@ -119,7 +119,7 @@ while(agent1_state != -1 or agent2_state != -1):
 	#find new policy from history
 	
 	hyperAgent = hyperXprediction(int(start_agent_state_1) , int(start_agent_state_2) , int(end_agent_state1) , int(end_agent_state2) , start_visited , visited , moves , hyperXPolicy)
-	bestPolicy = hyperAgent.findBestPolicy()
+	bestPolicy , otherAgentPolicyForDemo = hyperAgent.findBestPolicy()
 	start_agent_state_1 = end_agent_state1
 	start_agent_state_2 = end_agent_state2
 	start_visited = visited.copy()
@@ -190,8 +190,13 @@ while(agent1_state != -1 or agent2_state != -1):
 
 		for i in range(0 , 4):
 
+			end_agent_state1 , end_agent_state2 = agent1_state , agent2_state
+
 			agent1_state , agent2_state , visited = takeInfoFromEnv(agent1_state , agent2_state , visited)
 			
+			if(i == 0):
+				start_agent_state_1 , start_agent_state_2 = agent1_state , agent2_state
+
 			if(otherAgentPolicyForDemo == "nn"):
 
 				nn2 = nearestNeighbour(int(agent2_state) , visited)
@@ -217,7 +222,8 @@ while(agent1_state != -1 or agent2_state != -1):
 			if(agent1_target == -1 or agent2_target == -1):
 				break
 
-			giveInfoToEnv(agent1_target , agent2_target)
+			if(i != 3):
+				giveInfoToEnv(agent1_target , agent2_target)
 			
 			visited.append(agent1_target)
 			visited.append(agent2_target)
@@ -234,8 +240,13 @@ while(agent1_state != -1 or agent2_state != -1):
 		agent1_path = nn1.driver()
 		twoOptPathCounter_2 = 1
 
-		for i in range(0 , 3):
+		for i in range(0 , 4):
+			end_agent_state1 , end_agent_state2 = agent1_state , agent2_state
+
 			agent1_state , agent2_state , visited = takeInfoFromEnv(agent1_state , agent2_state , visited)
+			
+			if(i == 0):
+				start_agent_state_1 , start_agent_state_2 = agent1_state , agent2_state
 
 			if(otherAgentPolicyForDemo == "nn"):
 	
@@ -272,7 +283,8 @@ while(agent1_state != -1 or agent2_state != -1):
 			if(agent1_target == -1 or agent2_target == -1):
 				break
 
-			giveInfoToEnv(agent1_target , agent2_target)
+			if(i != 3):
+				giveInfoToEnv(agent1_target , agent2_target)
 
 			visited.append(agent1_target)
 			visited.append(agent2_target)
@@ -282,8 +294,13 @@ while(agent1_state != -1 or agent2_state != -1):
 
 	elif(bestPolicy == "rn"):
 
-		for i in range(0 , 3):
+		for i in range(0 , 4):
+			end_agent_state1 , end_agent_state2 = agent1_state , agent2_state
+
 			agent1_state , agent2_state , visited = takeInfoFromEnv(agent1_state , agent2_state , visited)
+			
+			if(i == 0):
+				start_agent_state_1 , start_agent_state_2 = agent1_state , agent2_state
 
 			if(otherAgentPolicyForDemo == "nn"):
 				rn1 = random(int(agent1_state) , visited)
@@ -309,7 +326,8 @@ while(agent1_state != -1 or agent2_state != -1):
 				rn2 = random(int(agent2_state) , visited)
 				agent2_target = rn2.driver()				
 
-			giveInfoToEnv(agent1_target , agent2_target)
+			if(i != 3):
+				giveInfoToEnv(agent1_target , agent2_target)
 
 			visited.append(agent1_target)
 			visited.append(agent2_target)
