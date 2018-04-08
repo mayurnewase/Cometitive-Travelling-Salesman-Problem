@@ -6,8 +6,8 @@ Changelog:-
 	
 	Aggressive heuristic method completed.
 	HyperX tseting for nn completed successfully.
-      Centralized controller completed.
-      Dataset generator completed.
+	Centralized controller completed.
+	Dataset generator completed.
 
 Setup:-
 
