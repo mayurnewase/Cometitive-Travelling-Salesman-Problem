@@ -6,6 +6,8 @@ Changelog:-
 	
 	Aggressive heuristic method completed.
 	HyperX tseting for nn completed successfully.
+      Centralized controller completed.
+      Dataset generator completed.
 
 Setup:-
 
@@ -23,8 +25,8 @@ Files info:-
 
 2.Connection Demo:-
       
-      client.py -> Demo file for basic client-server communication.
-      
+      client.py -> Demo file for basic client-server communication.      
+
 3.Heuristic methods:-
       
       nearest_neighbour.py -> Logic for controlling agent using NN.
@@ -32,7 +34,8 @@ Files info:-
       aggressive_neighbour.py -> Logic for controlling agent using aggressive heuristic.
       twoOpt.py -> Logic for controlling agent using 2-opt heuristic.
       
-4.Hyper heuristic modules:-(inside modularized directory)
+
+4.Hyper heuristic modules:-
       
       prediction_utils.py -> Used for reconstruction of path for predicting heuristic used by other agent.
       controller.py -> (main controller)Used for controlling agents and communication with enviroment.
@@ -40,12 +43,12 @@ Files info:-
 
 To Do:-
       
-      Test and remove bugs for multiple predictions
-      
+      1)second agent use 2opt.
+      2)an choose second nearest clash with leaveHim.
+      4)run 100 cities for 100 times.and find avg benifit(this is used in base paper).      
 
 
 
-      
 For more help in tkinter for gui visit https://www.python-course.eu/tkinter_canvas.php/
 
 For tips on pandas visit http://pythonhow.com/accessing-dataframe-columns-rows-and-cells/
