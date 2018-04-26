@@ -10,11 +10,18 @@ Changelog:-
 	Dataset generator completed.
 
 Setup:-
+1)install python 2.x or 3.x
 
-      install python 2.x or 3.x
-      install python library "tkinter". used for developing applications in gui.
-      install python library "pandas". used for managing data from csv files.
+	sudo add-apt-repository ppa:jonathonf/python-3.6
+	sudo apt-get update
+	sudo apt-get install python3.6	
+2)install pip
 
+	sudo apt-get install python-pip
+3)install required libraries
+	
+	 pip install -r requirements.txt
+	 
 Files info:-
 
 1.Dataset and Environment:-
