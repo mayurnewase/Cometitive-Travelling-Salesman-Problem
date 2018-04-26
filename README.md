@@ -22,7 +22,10 @@ Setup:-
 3)install required libraries
 	
 	 pip install -r requirements.txt
-	 
+
+Run project:-
+
+	python cui.py
 Files info:-
 
 1.Dataset and Environment:-
