@@ -10,6 +10,7 @@ Changelog:-
 	Dataset generator completed.
 
 Setup:-
+
 1)install python 2.x or 3.x
 
 	sudo add-apt-repository ppa:jonathonf/python-3.6
