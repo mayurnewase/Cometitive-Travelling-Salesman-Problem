@@ -11,10 +11,18 @@ Changelog:-
 
 Setup:-
 
-      install python 2.x or 3.x
-      install python library "tkinter". used for developing applications in gui.
-      install python library "pandas". used for managing data from csv files.
+1)install python 2.x or 3.x
 
+	sudo add-apt-repository ppa:jonathonf/python-3.6
+	sudo apt-get update
+	sudo apt-get install python3.6	
+2)install pip
+
+	sudo apt-get install python-pip
+3)install required libraries
+	
+	 pip install -r requirements.txt
+	 
 Files info:-
 
 1.Dataset and Environment:-
@@ -23,9 +31,10 @@ Files info:-
       environent.py -> Environment for 2 agents,controlled using listeners.
       datasetgenerator.py -> Generate random dataset for given number of cities.
 
-2.Connection Demo:-
+2.Plotting graphs:-
       
-      client.py -> Demo file for basic client-server communication.      
+      plotter.py -> To plot final graph.
+      finalResult.csv -> Store all results.
 
 3.Heuristic methods:-
       
