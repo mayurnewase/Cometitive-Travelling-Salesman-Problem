@@ -31,9 +31,10 @@ Files info:-
       environent.py -> Environment for 2 agents,controlled using listeners.
       datasetgenerator.py -> Generate random dataset for given number of cities.
 
-2.Connection Demo:-
+2.Plotting graphs:-
       
-      client.py -> Demo file for basic client-server communication.      
+      plotter.py -> To plot final graph.
+      finalResult.csv -> Store all results.
 
 3.Heuristic methods:-
       
