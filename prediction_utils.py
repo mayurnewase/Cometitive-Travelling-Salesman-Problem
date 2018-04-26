@@ -4,25 +4,28 @@ import pandas as pd
 class nearestNeighbour:
 	nearestNeighbourState = 0
 	visited = []
+	csv_file_path = "distanceFileHundred.csv"
 
-	def __init__(self , nearestNeighbourState , visited):
+	def __init__(self ,csv_file ,nearestNeighbourState , visited):
 		self.nearestNeighbourState = nearestNeighbourState
 		self.visited = visited.copy()
+		self.csv_file_path = csv_file
 
 	def findNearestNeighbour(self , currentCityId , visited):
 	#find neirest unvisited city to visit
 	#input->
 		#currentCityId : current city of agent
 		#visited : visited array
-		csv_file_path = "distanceFileThreeHundred.csv"
-		df = pd.read_csv(csv_file_path)	
-		dist = df.loc[currentCityId,"dist0":"dist299"]			#fetch distance values for current city
+		#csv_file_path = "distanceFileHundred.csv"
+		df = pd.read_csv(self.csv_file_path)
+		id = df.id
+		dist = df.loc[currentCityId,"dist0":"dist" + str(len(id) - 1)]			#fetch distance values for current city
 		#print("distance matrix of ",currentCityId , " is \n" ,dist)
 		#print("Visited array " , visited)
 
 		toCheck = []			#this array will store all city ids except current city.so agent can visit them.This is important coz distance of city to same city is 0.so agent may select this every time causing infinite loop.
 		
-		min = 9999
+		
 		for cityIndex in range(len(dist)):
 			if(dist[cityIndex] != 0):			#remove current city.
 				#min = dist[i]
@@ -41,7 +44,7 @@ class nearestNeighbour:
 
 		#print("unVisited array " , unVisited)
 
-		minDist = 9999
+		minDist = 999999
 		for city in unVisited:			#now find nearest city
 			if (dist[city] < minDist):
 				minDist = dist[city]
@@ -71,25 +74,26 @@ class aggressiveNeighbour:
 
 	visited = []
 	
-	csv_file_path = "distanceFileThreeHundred.csv"
-	df = pd.read_csv(csv_file_path)
-	id = df.id
-
-	def __init__(self , aggressiveState , otherAgentState ,otherAgentTarget  , visited , leaveHim):
+	csv_file_path = "distanceFileHundred.csv"
+	
+	def __init__(self , csv_file,aggressiveState , otherAgentState ,otherAgentTarget  , visited , leaveHim):
 		self.aggressiveState = aggressiveState
 		self.visited = visited.copy()
 		self.otherAgentState = otherAgentState
 		self.otherAgentTarget = otherAgentTarget
 		self.leaveHim = leaveHim
+		self.csv_file_path = csv_file
+		self.df = pd.read_csv(self.csv_file_path)
+		self.id = self.df.id
 
 	def findNearestNeighbour(self , currentCityId , visited):
 		
-		dist = self.df.loc[currentCityId,"dist0":"dist299"]
+		dist = self.df.loc[currentCityId,"dist0":"dist" + str(len(self.id) - 1)]
 		#print("distance matrix of ", self.state , " is \n" ,dist)
 		#print("should i leave him ",self.leaveHim)
 
 		toCheck = []
-		min = 9999
+		
 		for cityIndex in range(len(dist)):
 			if(dist[cityIndex] != 0):			#remove current city.
 				#min = dist[i]
@@ -112,7 +116,7 @@ class aggressiveNeighbour:
 			return -1
 		#print("unVisited array " , unVisited)
 
-		minDist = 9999
+		minDist = 999999
 		for city in unVisited:
 			if (dist[city] < minDist):
 				minDist = dist[city]
@@ -130,13 +134,13 @@ class aggressiveNeighbour:
 		if(nearestCity == -1):
 			return -1,False
 
-		row_data = self.df.loc[int(self.aggressiveState) , "dist0":"dist299"]
+		row_data = self.df.loc[int(self.aggressiveState) , "dist0":"dist" + str(len(self.id) - 1)]
 		cost1 = row_data[nearestCity]
 
-		row_data = self.df.loc[int(self.aggressiveState) , "dist0":"dist299"]
+		row_data = self.df.loc[int(self.aggressiveState) , "dist0":"dist" + str(len(self.id) - 1)]
 		cost2 = row_data[int(self.otherAgentTarget)]
 
-		row_data = self.df.loc[int(self.otherAgentState) , "dist0":"dist299"]
+		row_data = self.df.loc[int(self.otherAgentState) , "dist0":"dist" + str(len(self.id) - 1)]
 		cost3 = row_data[int(self.otherAgentTarget)]
 		
 		flagDitched = False
@@ -169,22 +173,23 @@ class twoOpt:
 	
 	twoOptAgentState = 0
 	visited = []
-	csv_file_path = "distanceFileThreeHundred.csv"
-	df = pd.read_csv(csv_file_path)
-
-	def __init__(self , twoOptAgentState , visited):
+	csv_file_path = "distanceFileHundred.csv"
+	
+	def __init__(self ,csv_file ,twoOptAgentState , visited):
 		self.twoOptAgentState = twoOptAgentState
 		self.visited = visited.copy()	
-		
+		self.csv_file_path = csv_file
+		self.df = pd.read_csv(self.csv_file_path)
+		self.id = self.df.id
+	
 	def findNearestNeighbour(self , currentCityId , visited):
 		
-		dist = self.df.loc[currentCityId,"dist0":"dist299"]			#fetch distance values for current city
+		dist = self.df.loc[currentCityId,"dist0":"dist" + str(len(self.id) - 1)]			#fetch distance values for current city
 		#print("distance matrix of ",currentCityId , " is \n" ,dist)
 		#print("Visited array " , visited)
 
 		toCheck = []			#this array will store all city ids except current city.so agent can visit them.This is important coz distance of city to same city is 0.so agent may select this every time causing infinite loop.
 		
-		min = 9999
 		for cityIndex in range(len(dist)):
 			if(dist[cityIndex] != 0):			#remove current and unreachable cities.
 				#min = dist[i]
@@ -202,7 +207,7 @@ class twoOpt:
 		if(len(unVisited) == 0):
 			return -1
 		
-		minDist = 9999
+		minDist = 999999
 		for city in unVisited:			#now find nearest city
 			if (dist[city] < minDist):
 				minDist = dist[city]
@@ -216,9 +221,9 @@ class twoOpt:
 	def findCostOfTravel(self , route):
 		cost = 0
 		for i in range(len(route) - 1):
-			row_data = self.df.loc[route[i] , "dist0" : "dist299"]
+			row_data = self.df.loc[route[i] , "dist0" : "dist" + str(len(self.id) - 1)]
 			if(row_data[route[i + 1]] == 0):					#if there is no path between cities
-				return 9999
+				return 999999
 			cost += row_data[route[i+1]]
 
 		return cost
@@ -251,7 +256,7 @@ class twoOpt:
 		goToCity = 0
 		unVisited = []
 		
-		for city in range (0,300):
+		for city in range (0,len(self.id)):
 			if city not in self.visited:
 				unVisited.append(city)
 		
@@ -303,6 +308,54 @@ class twoOpt:
 		return bestRoute[0]
 					
 
+class random:
+	
+	csv_file_path = "distanceFileThirty.csv"
+	
+	
+	thisState = 0
+	visited = []
+
+	def __init__(self ,csv_file ,thisState , visited):
+		self.thisState = thisState
+		self.visited = visited
+		self.csv_file_path = csv_file
+		self.df = pd.read_csv(self.csv_file_path)
+		self.id = self.df.id
+
+	def random_neighbour(self , currentCityId , visited):
+
+		dist = self.df.loc[currentCityId,"dist0":"dist" + str(len(self.id) - 1)]
+		#print("distance matrix of ",currentCityId , " is \n" ,dist)
+		toCheck = []
+		unVisited = []
+
+		for cityIndex in range(len(dist)):
+			if(dist[cityIndex] != 0):
+				toCheck.append(cityIndex)
+
+		#print("toCheck array is ",toCheck)
+
+		for city in toCheck:
+			if city not in visited:
+				unVisited.append(city)
+
+		if(len(unVisited) == 0):
+			return -1
+
+		#print("unVisited array is ",unVisited)
+
+		random_number = randint(0 , len(unVisited) - 1)				#both inclusive
+
+		newCity = unVisited[random_number]
+		#print("new city selected is ",newCity)
+		return newCity
+
+	def driver(self):
+
+
+		newCity = self.random_neighbour(int(self.thisState) , self.visited)
+		return newCity
 
 
 

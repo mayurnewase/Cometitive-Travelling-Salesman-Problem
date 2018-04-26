@@ -7,17 +7,33 @@ from multiprocessing.connection import Listener
 from csvWriter import logWriter
 from random import randint
 
+print(b"in environment")
+print(sys.argv[0] , sys.argv[1],sys.argv[2])
 #csv handling-----------------------------------------------------
-csv_file_path = "distanceFileThreeHundred.csv"
+#class env:
+#def __init__(self,csv_file_path_recieved , agent1_state_recieved , agent2_state_recieved):
+	#initVariables(csv_file_path_recieved , agent1_state_recieved , agent2_state_recieved)
+#global csv_file_path , df , X_pos , Y_pos , id , agent1_state , agent2_state
+global ids , df , X_pos , Y_pos , agent1_state , agent2_state
+csv_file_path = str(sys.argv[1])
 df = pd.read_csv(csv_file_path)	#read csv
 X_pos = df.x_pos 				#read x co-ordinates
+print(X_pos)
 Y_pos = df.y_pos 				#read y co-ordinates
-id = df.id 						#read id of city
+ids = df.id 						#read id of city
 
-#tkinter init-----------------------------------------------------
-master = Tk()					#initialize tkinter
-w = Canvas(master , width = 600 , height = 600)		#create canvas of size 600*600
-#w.pack()
+agent1_state = int(sys.argv[2])	#take initial states of agents
+agent2_state = int(sys.argv[3])
+print("HEY I AM IN ENVIRONMENT")
+#self.runAll()
+#def initVariables(self,csv_file_path_recieved , agent1_state_recieved , agent2_state_recieved):#call
+	
+def tkInit():#call
+	global master , w
+	#tkinter init-----------------------------------------------------
+	master = Tk()					#initialize tkinter
+	w = Canvas(master , width = 600 , height = 600)		#create canvas of size 600*600
+	w.pack()
 
 #env graphics-----------------------------------------------------
 
@@ -31,10 +47,11 @@ def drawCircle(x , y , r = 4):
 	id = w.create_oval(x-r , y-r , x+r , y+r , fill = "blue")
 	return id
 
-
-for i in range (300):			#draw each city.(co-ordinates stored in X_pos and Y_pos)
-	drawCircle(X_pos[i] , Y_pos[i])
-
+def drawCities():#call
+	global drawCircle
+	print(len(ids))
+	for i in range (len(ids)):			#draw each city.(co-ordinates stored in X_pos and Y_pos)
+		drawCircle(X_pos[i] , Y_pos[i])
 
 def drawAxis(width , height):
 	#draw axis (x,y) along 2 sides of canvas
@@ -55,7 +72,7 @@ def drawAxis(width , height):
 		w.create_text(13 , i , text = i)
 		i = i + 50
 
-drawAxis(600 , 600)
+#drawAxis(600 , 600)#call
 
 def drawConnectivity(city1_X , city1_Y , city2_X , city2_Y):
 	#draw lines connecting cities
@@ -64,32 +81,32 @@ def drawConnectivity(city1_X , city1_Y , city2_X , city2_Y):
 		
 	w.create_line(city1_X , city1_Y , city2_X , city2_Y , width = 2 , fill = "green")
 
+def drawPaths():#call
 
-
-for i in id:		#draw connectivity
-	j=i+1
-	while (j <11):
-		#drawConnectivity(X_pos[i] , Y_pos[i] , X_pos[j] , Y_pos[j])
-		j += 1
+	for i in ids:		#draw connectivity
+		j=i+1
+		while (j <11):
+			#drawConnectivity(X_pos[i] , Y_pos[i] , X_pos[j] , Y_pos[j])
+			j += 1
 
 
 ##Agent graphics--------------------------------------------------------------------------
 #cities_id = df.id
 #print(cities_id)
 
-agent1_state = 26	#take initial states of agents
-agent2_state = 73
+#agent1_state = 2	#take initial states of agents
+#agent2_state = 7
 
 def showAgentState(x , y, r = 9):
 	#show cirrent agent states in canvas by changing color of cities
 	#this basically create new circle over existing city with different color.
 	#coz we cant change only color of already drawn circle
-
+	print("showAgentState ",x , " ",y)
 	id = w.create_oval(x-r , y-r , x+r , y+r , fill = "red")
 
 
-showAgentState(X_pos[agent1_state] , Y_pos[agent1_state])
-showAgentState(X_pos[agent2_state] , Y_pos[agent2_state])
+#showAgentState(X_pos[agent1_state] , Y_pos[agent1_state])
+#showAgentState(X_pos[agent2_state] , Y_pos[agent2_state])
 
 ##Agent movement---------------------------------------------------------------------------
 
@@ -116,8 +133,8 @@ def moveToCityId(agentNo , cityId , agent1_state , agent2_state):
 
 	return agent1_state , agent2_state
 	
-print("Current city of agent 1 is" , agent1_state)
-print("Current city of agent 2 is" , agent2_state)
+#print("Current city of agent 1 is" , agent1_state)
+#print("Current city of agent 2 is" , agent2_state)
 
 def showInitialAgentData():
 	#w.create_text(500 , 25 , text="Agent 1 benifit\nAgent 2 benifit")
@@ -143,7 +160,7 @@ def updateAgentData(benifit):
 
 
 
-master.update()								#IMPORTANT->required for sleep call in tkinter
+#master.update()								#IMPORTANT->required for sleep call in tkinter
 
 #time.sleep(4)
 #agent1_state , agent2_state = moveToCityId(1 , 3 , agent1_state , agent2_state)
@@ -159,6 +176,7 @@ def initServer():
 	#2 listeners are on different addresses
 	#output->
 		#2 connections from both agents
+	global Listener
 
 	print("Starting server")
 	address = ('localhost', 6000)     # family is deduced to be 'AF_INET'
@@ -177,9 +195,24 @@ def initServer():
 def giveInfoToAgent(conn , conn2 ,agent1_state , agent2_state , visited):
 	#give info back to both agents.
 	#info includes current states of both agents
-		conn.send(agent1_state)
-		conn.send(agent2_state)
-		conn.send(visited)
+	conn.send(agent1_state)
+	conn.send(agent2_state)
+	conn.send(visited)
+
+
+#def runAll(self):
+#	global csv_file_path , df , X_pos , Y_pos , ids , agent1_state , agent2_state
+
+tkInit()
+drawCities()
+drawAxis(600 , 600)
+drawPaths()
+showAgentState(X_pos[agent1_state] , Y_pos[agent1_state])
+showAgentState(X_pos[agent2_state] , Y_pos[agent2_state])
+
+print("Current city of agent 1 is" , agent1_state)
+print("Current city of agent 2 is" , agent2_state)
+master.update()
 
 conn , conn2 = initServer()
 
@@ -248,51 +281,51 @@ while True:
 
 	if(agent1_state != agent2_state):
 		if(agent1_state not in visited):
-			benifit[0] += 200
-			finalCostToSubstractForLastCity1 = 200
+			benifit[0] += 500
+			finalCostToSubstractForLastCity1 = 500
 
 		if(agent2_state not in visited):
-			benifit[1] += 200
-			finalCostToSubstractForLastCity2 = 200
+			benifit[1] += 500
+			finalCostToSubstractForLastCity2 = 500
 
-		df2 = df.loc[prev1_state , "dist0":"dist299"]
+		df2 = df.loc[prev1_state , "dist0":"dist" + str(len(ids) - 1)]
 		cost1 = df2[agent1_state]
 		print("Agent 1 transition cost " , cost1)
 
-		df2 = df.loc[prev2_state , "dist0":"dist299"]
+		df2 = df.loc[prev2_state , "dist0":"dist" + str(len(ids) - 1)]
 		cost2 = df2[agent2_state]
 		print("Agent 2 transition cost " , cost2)
 
 	else:
 
-		df2 = df.loc[prev1_state , "dist0":"dist299"]
+		df2 = df.loc[prev1_state , "dist0":"dist" + str(len(ids) - 1)]
 		cost1 = df2[agent1_state]
 		print("Agent 1 transition cost " , cost1)
 
-		df2 = df.loc[prev2_state , "dist0":"dist299"]
+		df2 = df.loc[prev2_state , "dist0":"dist" + str(len(ids) - 1)]
 		cost2 = df2[agent2_state]
 		print("Agent 2 transition cost " , cost2)
 
 		if(cost1 < cost2):
-			benifit[0] += 200
-			finalCostToSubstractForLastCity1 = 200
+			benifit[0] += 500
+			finalCostToSubstractForLastCity1 = 500
 			#finalCostToSubstractForLastCity2 = 0
 		elif(cost1 > cost2):
-			benifit[1] += 200
-			finalCostToSubstractForLastCity2 = 200
+			benifit[1] += 500
+			finalCostToSubstractForLastCity2 = 500
 			#finalCostToSubstractForLastCity1 = 0
 		elif(cost1 == cost2):	#sharing benifit
-			benifit[0] += 100
-			benifit[1] += 100
-			finalCostToSubstractForLastCity1 = 100
-			finalCostToSubstractForLastCity2 = 100
+			benifit[0] += 250
+			benifit[1] += 250
+			finalCostToSubstractForLastCity1 = 250
+			finalCostToSubstractForLastCity2 = 250
 
 
-	df2 = df.loc[prev1_state , "dist0":"dist299"]
+	df2 = df.loc[prev1_state , "dist0":"dist" + str(len(ids) - 1)]
 	cost1 = df2[agent1_state]
 	costOfTravel[0] += cost1
 
-	df2 = df.loc[prev2_state , "dist0":"dist299"]
+	df2 = df.loc[prev2_state , "dist0":"dist" + str(len(ids) - 1)]
 	cost2 = df2[agent2_state]
 	costOfTravel[1] += cost2
 
@@ -319,16 +352,16 @@ print("Total benifits are ",benifit)
 print("Total costs for travelling are ",costOfTravel)
 
 unvisited=[]
-for i in range(300):
+for i in range(len(ids)):
 	if i not in visited:
 		unvisited.append(i)
 
 print("leftover unvisited is ",unvisited)
 
 if(len(unvisited) == 1):
-	df2 = df.loc[agent1_state , "dist0":"dist299"]
+	df2 = df.loc[agent1_state , "dist0":"dist" + str(len(ids) - 1)]
 	cost1 = df2[unvisited[0]]
-	df2 = df.loc[agent2_state , "dist0":"dist299"]
+	df2 = df.loc[agent2_state , "dist0":"dist" + str(len(ids) - 1)]
 	cost2 = df2[unvisited[0]]
 
 	finalCostToSubstractForLastCity1 = cost1
@@ -344,15 +377,6 @@ print("Agent 2 benifit : " , finalBenifit_2)
 
 lg = logWriter(agent1_state_for_logs , agent2_state_for_logs , otherAgentHeuristic , finalBenifit_1 , finalBenifit_2)
 lg.write()
-
-
-
-
-
-
-
-
-
 
 
 

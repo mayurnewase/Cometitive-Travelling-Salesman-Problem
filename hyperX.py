@@ -1,10 +1,10 @@
 #from twoOpt import optClass
 #from random_neighbour import random
-from prediction_utils import nearestNeighbour , twoOpt , aggressiveNeighbour
+from prediction_utils import nearestNeighbour , twoOpt , aggressiveNeighbour , random
 #from nearest_neighbour import nearestNeighbour
 #from aggressive_neighbour import aggressiveNeighbour
 #from twoOpt import twoOpt
-from random_neighbour import random
+#from random_neighbour import random
 import pandas as pd
 '''
 This module will recieve ->
@@ -25,8 +25,9 @@ probability map
 3 -> random
 '''
 class hyperXprediction:
-	csv_file_path = "distanceFileThreeHundred.csv"
-	df = pd.read_csv(csv_file_path)	#read csv
+	#csv_file_path = "distanceFileHundred.csv"
+	#df = pd.read_csv(csv_file_path)	#read csv
+	#id = df.id
 	startAgentState1 = 0			#initial states to reconstruct same path for other agent's policy prediction
 	startAgentState2 = 0
 	hyperState = 0					#current final state->from which find further states
@@ -39,8 +40,10 @@ class hyperXprediction:
 	randomCitiesChosen = []
 	leaveHim = False
 
-	def __init__(self ,startAgentState1 , startAgentState2 , hyperState , otherState , startVisited ,visited , moves , currentPolicy , leaveHim):
-
+	def __init__(self ,csv_file,startAgentState1 , startAgentState2 , hyperState , otherState , startVisited ,visited , moves , currentPolicy , leaveHim):
+		self.csv_file_path = csv_file
+		self.df = pd.read_csv(self.csv_file_path)	#read csv
+		self.id = self.df.id
 		self.startAgentState1 = startAgentState1
 		self.startAgentState2 = startAgentState2
 		self.hyperState = hyperState
@@ -51,6 +54,7 @@ class hyperXprediction:
 		self.currentPolicy = currentPolicy
 		self.probability = [0]*4
 		self.leaveHim = leaveHim
+
 		print("")
 		print("hyperX recieved data ....")
 		print("startAgentState1 ",startAgentState1)
@@ -86,8 +90,6 @@ class hyperXprediction:
 			visited_1 = self.startVisited.copy()
 			visited_2 = self.startVisited.copy()
 			visited_3 = self.startVisited.copy()
-			
-			#otherState_3 = visited_3[1]		#for 2-opt,very first city needed.(if wanna make 2-opt smart change this)
 
 			predictedMoves = []
 
@@ -101,7 +103,7 @@ class hyperXprediction:
 				predictedMoves.append(otherState_1)
 				#print("nn state is" , thisState_1)
 				#print("nn visited is" , visited_1)
-				nn = nearestNeighbour(thisState_1 , visited_1)	#this agent
+				nn = nearestNeighbour(self.csv_file_path , thisState_1 , visited_1)	#this agent
 				nearestAgentTarget = nn.driver()
 				#print("Nearest agent target is ",nearestAgentTarget)
 				
@@ -110,7 +112,7 @@ class hyperXprediction:
 				if(nearestAgentTarget == -1):
 					break
 
-				an = aggressiveNeighbour(otherState_1,thisState_1,nearestAgentTarget,visited_1,leaveHim)
+				an = aggressiveNeighbour(self.csv_file_path,otherState_1,thisState_1,nearestAgentTarget,visited_1,leaveHim)
 				aggressiveAgentTarget , leaveHim = an.driver()
 				#run aggressive 												#other agent maybe
 				#an = aggressiveNeighbour(otherState_1,thisState_1,nearestAgentTarget,visited_1)
@@ -147,7 +149,7 @@ class hyperXprediction:
 
 				predictedMoves.append(otherState_2)
 
-				nn = nearestNeighbour(thisState_2 , visited_2)
+				nn = nearestNeighbour(self.csv_file_path,thisState_2 , visited_2)
 				nearestAgentTarget = nn.driver()
 				#print("nearest agent 1 target is " , nearestAgentTarget)
 				movesPlayed += 1
@@ -156,7 +158,7 @@ class hyperXprediction:
 					break
 				#print("---")
 
-				nn2 = nearestNeighbour(otherState_2 , visited_2)
+				nn2 = nearestNeighbour(self.csv_file_path,otherState_2 , visited_2)
 				#print("visited_2 is" , visited_2)
 				#print("other agent state is" , otherState_2)
 				nearestAgentTarget_2 = nn2.driver()
@@ -177,30 +179,30 @@ class hyperXprediction:
 			print("probability is" , self.probability)
 			
 		#-------------------------
-			'''
+			
 			print("----------->>>>>>>>>>")
 			print("NN vs 2-opt")
 
 			movesPlayed = 0
 			predictedMoves = []
-			#to = twoOpt(otherState_3 , visited_3)
-			#print("2-opt agent state is" , otherState_3)
-			#twoOptFullPath = to.driver()
-			#print("2-opt full path is ",twoOptFullPath)
-			print("appending this to predicted moves for to ",visited_3[int(len(visited_3)) - 1])
-			predictedMoves.append(visited_3[int(len(visited_3)) - 1])
+			
+			#print("appending this to predicted moves for to ",visited_3[int(len(visited_3)) - 1])
+			#predictedMoves.append(visited_3[int(len(visited_3)) - 1])
+			#movesPlayed += 1
 
-			movesPlayed += 1
+			for i in range(0 , 4):
+				
+				predictedMoves.append(otherState_3)
 
-			for i in range(0 , 3):
+				movesPlayed += 1
 
-				nn = nearestNeighbour(thisState_3 , visited_3)
+				nn = nearestNeighbour(self.csv_file_path,thisState_3 , visited_3)
 				#print("this agent state is" , thisState_3)
 				nearestAgentTarget = nn.driver()
 				#print("nearest agent 1 target is " , nearestAgentTarget)
 				if(nearestAgentTarget == -1):
 					break
-				to = twoOpt(otherState_3 , visited_3)
+				to = twoOpt(self.csv_file_path,otherState_3 , visited_3)
 				twoOptAgentTarget = to.driver()
 				#print("2-opt agent target is " , twoOptAgentTarget)
 				#print("---")
@@ -208,12 +210,9 @@ class hyperXprediction:
 				thisState_3 = nearestAgentTarget
 				otherState_3 = twoOptAgentTarget
 
-				visited_3.append(twoOptAgentTarget)
+				visited_3.append(otherState_3)
 				visited_3.append(thisState_3)
 				#print(visited_3)
-
-				predictedMoves.append(twoOptAgentTarget)
-				movesPlayed += 1
 
 			for i in range(0 , movesPlayed):
 				if(self.moves[i] == predictedMoves[i]):
@@ -221,7 +220,7 @@ class hyperXprediction:
 			
 			print("predictedMoves is" , predictedMoves)
 			print("probability is" , self.probability)			
-			'''
+			
 
 #----------------------------this agent -> NN completed--------------------------------------------------------------
 
@@ -241,7 +240,7 @@ class hyperXprediction:
 			visited_3 = self.startVisited.copy()
 
 			predictedMoves = []
-			leaveHim = False
+			leaveHim = self.leaveHim
 			#FIGHT BETWEEN 2 REAL AGENTS
 			
 			print("2-opt vs AN")
@@ -251,10 +250,10 @@ class hyperXprediction:
 				predictedMoves.append(otherState_1)
 				#run aggressive 
 
-				to = twoOpt(thisState_1 , visited_1)
+				to = twoOpt(self.csv_file_path,thisState_1 , visited_1)
 				twoOptAgentTarget = to.driver()
 													
-				an = aggressiveNeighbour(otherState_1 , thisState_1 , twoOptAgentTarget , visited_1,leaveHim)
+				an = aggressiveNeighbour(self.csv_file_path , otherState_1 , thisState_1 , twoOptAgentTarget , visited_1,leaveHim)
 				aggressiveAgentTarget , leaveHim = an.driver()
 				#print("Aggressive agent state is " , aggressiveAgentTarget)
 				movesPlayed += 1
@@ -288,10 +287,10 @@ class hyperXprediction:
 				
 				predictedMoves.append(otherState_2)
 
-				nn = nearestNeighbour(otherState_2  , visited_2)
+				nn = nearestNeighbour(self.csv_file_path , otherState_2  , visited_2)
 				nearestAgentTarget = nn.driver()
 
-				to = twoOpt(thisState_2 , visited_2)
+				to = twoOpt(self.csv_file_path , thisState_2 , visited_2)
 				twoOptAgentTarget = to.driver()
 
 				movesPlayed += 1
@@ -320,23 +319,31 @@ class hyperXprediction:
 			predictedMoves = []
 			movesPlayed = 0
 
-			to_2 = twoOpt(otherState_3)
-			twoOptFullPath_2 = to_2.driver()
-			print("2-opt full path is ",twoOptFullPath_2)
+			#to_2 = twoOpt(otherState_3)
+			#twoOptFullPath_2 = to_2.driver()
+			#print("2-opt full path is ",twoOptFullPath_2)
 
 			for i in range(0 , 4):
-				to1 = twoOpt(thisState_3 , visited_3)
+				predictedMoves.append(otherState_3)
+				movesPlayed += 1
+
+				to1 = twoOpt(self.csv_file_path , thisState_3 , visited_3)
 				twoOptAgentTarget_1 = to1.driver()
 
-				to2 = twoOpt(otherState_3 , visited_3)
+				to2 = twoOpt(self.csv_file_path , otherState_3 , visited_3)
 				twoOptAgentTarget_2 = to2.driver()
 
-				visited_3.append(twoOptAgentTarget_1)
-				visited_3.append(twoOptAgentTarget_2)
-				
-				predictedMoves.append(twoOptAgentTarget_2)
+				if(twoOptAgentTarget_1 == -1 or twoOptAgentTarget_2 == -1):
+					break
 
-			for i in range(0 , 4):
+				otherState_3 = twoOptAgentTarget_2
+				thisState_3 = twoOptAgentTarget_1
+
+				visited_3.append(otherState_3)
+				visited_3.append(thisState_3)
+				
+			
+			for i in range(0 , movesPlayed):
 				if(self.moves[i] == predictedMoves[i]):
 					self.probability[2] += 1
 
@@ -360,7 +367,7 @@ class hyperXprediction:
 			visited_2 = self.startVisited.copy()
 			visited_3 = self.startVisited.copy()
 
-			leaveHim = False
+			leaveHim = self.leaveHim
 			
 			print("AN vs NN")
 			predictedMoves = []
@@ -371,7 +378,7 @@ class hyperXprediction:
 				
 				predictedMoves.append(otherState_1)
 
-				nn = nearestNeighbour(otherState_1 , visited_1)
+				nn = nearestNeighbour(self.csv_file_path , otherState_1 , visited_1)
 				#print("other agent state is" , otherState_1)
 				
 				nearestAgentTarget = nn.driver()
@@ -381,7 +388,7 @@ class hyperXprediction:
 				if(nearestAgentTarget == -1):
 					break
 
-				an = aggressiveNeighbour(thisState_1,otherState_1,nearestAgentTarget,visited_1,leaveHim)
+				an = aggressiveNeighbour(self.csv_file_path , thisState_1,otherState_1,nearestAgentTarget,visited_1,leaveHim)
 				aggressiveAgentTarget , leaveHim = an.driver()
 				#print("Aggressive agent state is " , aggressiveAgentTarget)
 				if(aggressiveAgentTarget == -1):
@@ -404,29 +411,30 @@ class hyperXprediction:
 			print("probability is" , self.probability)
 
 			#--------------------------------------------
-			'''
+			
 			print("AN vs 2-opt")
 			print("-------------")
 			movesPlayed = 0
 			predictedMoves = []
-			leaveHim = False
+			leaveHim = self.leaveHim
 
 			#to = twoOpt(otherState_2)
 			#twoOptFullPath = to.driver()
 			#print("2-opt full path is ",twoOptFullPath)
 			
-			predictedMoves.append(visited_2[int(len(visited_2)) - 1])
-			movesPlayed += 1
+			#predictedMoves.append(visited_2[int(len(visited_2)) - 1])
+			#movesPlayed += 1
 
-			for i in range(0 , 3):
+			for i in range(0 , len(self.moves)):
 
 				#predictedMoves.append(twoOptFullPath[i])
-				to = twoOpt(int(otherState_2) , visited_2)
+				predictedMoves.append(otherState_2)
+				to = twoOpt(self.csv_file_path , int(otherState_2) , visited_2)
 				otherAgentTarget = to.driver()
 
 				#otherAgentTarget = twoOptFullPath[i+1]
 
-				an = aggressiveNeighbour(thisState_2 , otherState_2 , otherAgentTarget , visited_2,leaveHim)
+				an = aggressiveNeighbour(self.csv_file_path , thisState_2 , otherState_2 , otherAgentTarget , visited_2,leaveHim)
 				aggressiveAgentTarget , leaveHim = an.driver()
 
 				movesPlayed += 1
@@ -438,7 +446,7 @@ class hyperXprediction:
 				thisState_2 = aggressiveAgentTarget
 				otherState_2 = otherAgentTarget
 
-				predictedMoves.append(otherAgentTarget)
+				#predictedMoves.append(otherAgentTarget)
 
 				visited_2.append(thisState_2)
 				visited_2.append(otherAgentTarget)
@@ -450,7 +458,7 @@ class hyperXprediction:
 					self.probability[2] += 1
 			print("predictedMoves is" , predictedMoves)
 			print("probability is" , self.probability)			
-			'''
+			
 			#-----------------------------------------------------
 
 			print("====================================")
@@ -459,7 +467,7 @@ class hyperXprediction:
 			
 			movesPlayed = 0
 			predictedMoves = []
-			leaveHim = False
+			leaveHim = self.leaveHim
 			ditchingChance = 1
 
 			for i in range(0 , len(self.moves)):
@@ -487,25 +495,31 @@ class hyperXprediction:
 					if(leaveHim == True):
 						ditchingChance = 1
 				'''
+				print("in hyperX ditch chance is for agent",ditchingChance)
 				if(ditchingChance == 1):
-					an2 = aggressiveNeighbour(int(otherState_3),int(thisState_3),int(0),visited_3,True)
+					print("agent2 playing")
+					an2 = aggressiveNeighbour(self.csv_file_path , int(otherState_3),int(thisState_3),int(thisState_3),visited_3,True)
 					agent2_target , leaveHim = an2.driver()
-
-					an1 = aggressiveNeighbour(int(thisState_3),int(otherState_3),int(agent2_target),visited_3,False)
+					print("agent1 playing")
+					an1 = aggressiveNeighbour(self.csv_file_path , int(thisState_3),int(otherState_3),int(agent2_target),visited_3,False)
 					agent1_target , leaveHim = an1.driver()
 
 					if(leaveHim == True):
 						ditchingChance = 2
+						print("agent1 ditched agent2.now switching chance.")
 					#ditchingChance = 2
 
 				elif(ditchingChance == 2):
-					an1 = aggressiveNeighbour(int(thisState_3),int(otherState_3),int(0),visited_3,True)		#no need of other's target
+					print("agent1 playing")
+					an1 = aggressiveNeighbour(self.csv_file_path , int(thisState_3),int(otherState_3),int(otherState_3),visited_3,True)		#no need of other's target
 					agent1_target , leaveHim = an1.driver()
 					
-					an2 = aggressiveNeighbour(int(otherState_3),int(thisState_3),int(agent1_target),visited_3,False)
+					print("agent2 playing")
+					an2 = aggressiveNeighbour(self.csv_file_path , int(otherState_3),int(thisState_3),int(agent1_target),visited_3,False)
 					agent2_target , leaveHim = an2.driver()
 					
 					if(leaveHim == True):
+						print("agent2 ditched agent1.now switching chance.")
 						ditchingChance = 1
 
 				movesPlayed += 1
@@ -531,6 +545,7 @@ class hyperXprediction:
 			print("predictedMoves is" , predictedMoves)
 			print("probability is" , self.probability)
 
+		self.leaveHim = leaveHim		#DONT KNOW IF THIS WORKS OR NOT...
 
 	def findBenifit(self , prev1_state , prev2_state , agent1_state , agent2_state , visited , verbose = False):
 
@@ -543,32 +558,32 @@ class hyperXprediction:
 		
 		if(agent1_state != agent2_state):
 			if(agent1_state not in visited):
-				benifit[0] += 200
+				benifit[0] += 500
 			if(agent2_state not in visited):
-				benifit[1] += 200
+				benifit[1] += 500
 
 		else:
-			df2 = self.df.loc[prev1_state , "dist0":"dist299"]
+			df2 = self.df.loc[prev1_state , "dist0":"dist" + str(len(self.id) - 1)]
 			cost1 = df2[agent1_state]
 			#print("Agent 1 transition cost " , cost1)
 
-			df2 = self.df.loc[prev2_state , "dist0":"dist299"]
+			df2 = self.df.loc[prev2_state , "dist0":"dist" + str(len(self.id) - 1)]
 			cost2 = df2[agent2_state]
 			#print("Agent 2 transition cost " , cost2)
 
 			if(cost1 < cost2):
-				benifit[0] += 200
+				benifit[0] += 500
 			elif(cost1 > cost2):
-				benifit[1] += 200
+				benifit[1] += 500
 			elif(cost1 == cost2):	#sharing benifit
-				benifit[0] += 100
-				benifit[1] += 100
+				benifit[0] += 250
+				benifit[1] += 250
 
-		df2 = self.df.loc[prev1_state , "dist0":"dist299"]
+		df2 = self.df.loc[prev1_state , "dist0":"dist" + str(len(self.id) - 1)]
 		cost1 = df2[agent1_state]
 		costOfTravel[0] += cost1
 
-		df2 = self.df.loc[prev2_state , "dist0":"dist299"]
+		df2 = self.df.loc[prev2_state , "dist0":"dist" + str(len(self.id) - 1)]
 		cost2 = df2[agent2_state]
 		costOfTravel[1] += cost2
 
@@ -623,7 +638,7 @@ class hyperXprediction:
 			visited = self.visited.copy()
 
 			unvisited = []
-			for i in range(0 , 300):
+			for i in range(0 , len(self.id)):
 				if i not in self.visited:
 					unvisited.append(i)
 			
@@ -631,8 +646,8 @@ class hyperXprediction:
 
 			while(len(unvisited) != 0):
 		
-				nn1 = nearestNeighbour(agent1_state , visited)
-				nn2 = nearestNeighbour(agent2_state , visited)
+				nn1 = nearestNeighbour(self.csv_file_path , agent1_state , visited)
+				nn2 = nearestNeighbour(self.csv_file_path , agent2_state , visited)
 
 				hyperTarget = nn1.driver()
 				otherTarget = nn2.driver()
@@ -649,7 +664,7 @@ class hyperXprediction:
 				visited.append(agent2_state)
 
 				unvisited = []
-				for i in range(0 , 300):
+				for i in range(0 , len(self.id)):
 					if i not in visited:
 						unvisited.append(i)				
 			
@@ -660,11 +675,11 @@ class hyperXprediction:
 			agent1_state = self.hyperState
 			agent2_state = self.otherState
 			visited = self.visited.copy()
-			leaveHim = False
+			leaveHim = self.leaveHim
 			print("agent1_state is ",agent1_state , "agent1_state is ", agent2_state)
 
 			unvisited = []
-			for i in range(0 , 300):
+			for i in range(0 , len(self.id)):
 				if i not in self.visited:
 					unvisited.append(i)
 			
@@ -672,10 +687,10 @@ class hyperXprediction:
 			
 			while(len(unvisited) != 0):
 		
-				nn2 = nearestNeighbour(agent2_state , visited)
+				nn2 = nearestNeighbour(self.csv_file_path , agent2_state , visited)
 				otherTarget = nn2.driver()
 
-				an1 = aggressiveNeighbour(agent1_state , agent2_state , otherTarget , visited,leaveHim)
+				an1 = aggressiveNeighbour(self.csv_file_path , agent1_state , agent2_state , otherTarget , visited,leaveHim)
 				hyperTarget , leaveHim = an1.driver()
 				
 
@@ -691,12 +706,12 @@ class hyperXprediction:
 				visited.append(agent2_state)
 
 				unvisited = []
-				for i in range(0 , 300):
+				for i in range(0 , len(self.id)):
 					if i not in visited:
 						unvisited.append(i)
 
 			print("Benifit for an vs nn is " , allBenifits[1])
-			'''
+			
 			print("\ntrying 2-opt vs nn")
 			#agent1_state = self.startAgentState1
 			agent1_state = self.hyperState
@@ -705,7 +720,7 @@ class hyperXprediction:
 			visited = self.visited.copy()
 
 			unvisited = []
-			for i in range(0 , 300):
+			for i in range(0 , len(self.id)):
 				if i not in self.visited:
 					unvisited.append(i)
 
@@ -714,10 +729,10 @@ class hyperXprediction:
 			while (len(unvisited) != 0):
 				
 				#hyperTarget = twoOptFullPath_1[int(len(visited) / 2)]#How to find current index in full path
-				to = twoOpt(int(agent1_state) , visited)
+				to = twoOpt(self.csv_file_path , int(agent1_state) , visited)
 				hyperTarget = to.driver()
 				
-				nn2 = nearestNeighbour(int(agent2_state) , visited)
+				nn2 = nearestNeighbour(self.csv_file_path , int(agent2_state) , visited)
 				otherTarget = nn2.driver()
 
 				allBenifits[2] += self.findBenifit(agent1_state , agent2_state , hyperTarget , otherTarget , visited)#benifit of nn for hyper
@@ -729,13 +744,13 @@ class hyperXprediction:
 				visited.append(agent2_state)
 
 				unvisited = []
-				for i in range(0 , 300):
+				for i in range(0 , len(self.id)):
 					if i not in visited:
 						unvisited.append(i)
 
 			print("Benifit for 2-opt vs nn is " , allBenifits[2])
 			#---------------------------------------
-			'''
+			
 
 		elif(otherPolicy == "an"):
 
@@ -744,21 +759,21 @@ class hyperXprediction:
 			agent2_state = self.otherState
 			print("agent1_state is ",agent1_state , "agent1_state is ", agent2_state)
 			visited = self.visited.copy()
-			leaveHim = False
+			leaveHim = self.leaveHim
 
 			unvisited = []
 			
-			for i in range(0 , 300):
+			for i in range(0 , len(self.id)):
 				if i not in self.visited:
 					unvisited.append(i)
 
 			print("unvisited is ",unvisited)
 			while(int(agent1_state) != -1 or int(agent2_state) != -1):			#RISKY CHANGE FOR -1 INDEX ISSUE
 		
-				nn1 = nearestNeighbour(int(agent1_state) , visited)
+				nn1 = nearestNeighbour(self.csv_file_path , int(agent1_state) , visited)
 				hyperTarget = nn1.driver()
 
-				an2 = aggressiveNeighbour(int(agent2_state) , int(agent1_state) , int(hyperTarget) ,visited,leaveHim)
+				an2 = aggressiveNeighbour(self.csv_file_path , int(agent2_state) , int(agent1_state) , int(hyperTarget) ,visited,leaveHim)
 				otherTarget , leaveHim = an2.driver()
 
 				if(otherTarget == -1 or hyperTarget == -1):
@@ -773,13 +788,13 @@ class hyperXprediction:
 				visited.append(agent2_state)
 
 				unvisited = []
-				for i in range(0 , 300):
+				for i in range(0 , len(self.id)):
 					if i not in self.visited:
 						unvisited.append(i)
 
 			print("Benifit for nn vs an is " , allBenifits[0])
 
-			'''
+			
 			print("\ntrying 2-opt vs an")
 			#agent1_state = self.startAgentState1
 			agent1_state = self.hyperState
@@ -788,10 +803,10 @@ class hyperXprediction:
 			print("agent1_state is ",agent1_state , "agent1_state is ", agent2_state)
 			visited = self.visited.copy()
 			print("unvisited is ",unvisited)
-			leaveHim = False
+			leaveHim = self.leaveHim
 
 			unvisited = []
-			for i in range(0 , 300):
+			for i in range(0 , len(self.id)):
 				if i not in self.visited:
 					unvisited.append(i)
 
@@ -801,10 +816,10 @@ class hyperXprediction:
 			while(agent1_state != -1 or agent2_state != -1):
 
 				#hyperTarget = twoOptFullPath_1[int(len(visited) / 2)]#How to find current index in full path
-				to = twoOpt(int(agent1_state) , visited)
+				to = twoOpt(self.csv_file_path , int(agent1_state) , visited)
 				hyperTarget= to.driver()
 
-				an2 = aggressiveNeighbour(int(agent2_state) , int(agent1_state) , int(hyperTarget) ,visited,leaveHim)
+				an2 = aggressiveNeighbour(self.csv_file_path , int(agent2_state) , int(agent1_state) , int(hyperTarget) ,visited,leaveHim)
 				otherTarget , leaveHim = an2.driver()
 				
 				if(otherTarget == -1):
@@ -819,20 +834,21 @@ class hyperXprediction:
 				visited.append(agent2_state)
 
 				unvisited = []
-				for i in range(0 , 300):
+				for i in range(0 , len(self.id)):
 					if i not in self.visited:
 						unvisited.append(i)
 
 			print("Benifit for 2-opt vs an is " , allBenifits[2])
-			'''
+			
+
 			print("\ntrying rn vs an")
 			agent1_state = self.hyperState
 			agent2_state = self.otherState
 			print("agent1_state is ",agent1_state , "agent1_state is ", agent2_state)
 			visited = self.visited.copy()
-			leaveHim = False
+			leaveHim = self.leaveHim
 
-			for i in range(0 , 300):				#useless now..can be removed
+			for i in range(0 , len(self.id)):				#useless now..can be removed
 				if i not in self.visited:
 					unvisited.append(i)
 			
@@ -840,7 +856,7 @@ class hyperXprediction:
 
 			while(int(agent1_state) != -1):			#RISKY CHANGE FOR -1 INDEX ISSUE
 		
-				rn1 = random(int(agent1_state) , visited)
+				rn1 = random(self.csv_file_path , int(agent1_state) , visited)
 				hyperTarget = rn1.driver()
 				#self.randomCitiesChosen[addRandomCityIndex] = int(hyperTarget)
 				self.randomCitiesChosen.append(int(hyperTarget))
@@ -849,7 +865,7 @@ class hyperXprediction:
 				if(hyperTarget == -1):
 					break
 
-				an2 = aggressiveNeighbour(int(agent2_state) , int(agent1_state) , int(hyperTarget) ,visited,leaveHim)
+				an2 = aggressiveNeighbour(self.csv_file_path , int(agent2_state) , int(agent1_state) , int(hyperTarget) ,visited,leaveHim)
 				otherTarget , leaveHim = an2.driver()
 
 				if(otherTarget == -1):
@@ -864,7 +880,7 @@ class hyperXprediction:
 				visited.append(agent2_state)
 
 				unvisited = []						#useless now..can be removed
-				for i in range(0 , 300):
+				for i in range(0 , len(self.id)):
 					if i not in self.visited:
 						unvisited.append(i)
 
@@ -875,17 +891,17 @@ class hyperXprediction:
 			agent2_state = self.otherState
 			print("agent1_state is ",agent1_state , "agent1_state is ", agent2_state)
 			visited = self.visited.copy()
-			leaveHim = False
+			leaveHim = self.leaveHim
 			ditchingChance = 1
 
 			while(int(agent1_state) != -1):
 
 				if(ditchingChance == 1):
 						print("agent2 playing")
-						an2 = aggressiveNeighbour(int(agent2_state),int(agent1_state),int(0),visited,True)
+						an2 = aggressiveNeighbour(self.csv_file_path , int(agent2_state),int(agent1_state),int(agent1_state),visited,True)
 						agent2_target , leaveHim = an2.driver()
 						print("agent1 playing")
-						an1 = aggressiveNeighbour(int(agent1_state),int(agent2_state),int(agent2_target),visited,False)
+						an1 = aggressiveNeighbour(self.csv_file_path , int(agent1_state),int(agent2_state),int(agent2_target),visited,False)
 						agent1_target , leaveHim = an1.driver()
 
 						if(leaveHim == True):
@@ -895,11 +911,11 @@ class hyperXprediction:
 
 				elif(ditchingChance == 2):
 					print("agent1 playing")
-					an1 = aggressiveNeighbour(int(agent1_state),int(agent2_state),int(0),visited,True)
+					an1 = aggressiveNeighbour(self.csv_file_path , int(agent1_state),int(agent2_state),int(agent1_state),visited,True)
 					agent1_target , leaveHim = an1.driver()
 					
 					print("agent2 playing")
-					an2 = aggressiveNeighbour(int(agent2_state),int(agent1_state),int(agent1_target),visited,False)
+					an2 = aggressiveNeighbour(self.csv_file_path , int(agent2_state),int(agent1_state),int(agent1_target),visited,False)
 					agent2_target , leaveHim = an2.driver()
 					
 					if(leaveHim == True):
@@ -927,32 +943,30 @@ class hyperXprediction:
 
 			agent1_state = self.hyperState
 			visited = self.visited.copy()
-			agent2_state = visited[1]				#2-opt path need very first starting position for costruction of path.(if in future you wanna make 2opt smart then change this)
+			agent2_state = self.otherState
+
 			print("agent1_state is ",agent1_state , "agent1_state is ", agent2_state)
 
 			unvisited = []
-			for i in range(0 , 300):
+			for i in range(0 , len(self.id)):
 				if i not in self.visited:
 					unvisited.append(i)
 
 			print("unvisited is ",unvisited)
 
-			to2 = twoOpt(int(agent2_state))
-			twoOptFullPath_2 = to2.driver()
-			j = 0
-
 			while(agent1_state != -1 or agent2_state != -1):
 
-				nn1 = nearestNeighbour(int(agent1_state) , visited)
+				nn1 = nearestNeighbour(self.csv_file_path , int(agent1_state) , visited)
 				hyperTarget = nn1.driver()
 
 				if(hyperTarget == -1):
 					break
 
-				otherTarget = twoOptFullPath_2[int(len(visited) / 2)]
+				to = twoOpt(self.csv_file_path , int(agent2_state) , visited)
+				otherTarget = to.driver()
 
 				print("agent1_state =", hyperTarget,"agent2_state =",otherTarget)
-				allBenifits[0] += self.findBenifit(agent1_state , twoOptFullPath_2[int(len(visited) / 2) - 1] , hyperTarget , otherTarget , visited)#benifit of nn for hyper
+				allBenifits[0] += self.findBenifit(agent1_state , agent2_state , hyperTarget , otherTarget , visited)#benifit of nn for hyper
 				
 				agent1_state = hyperTarget
 				agent2_state = otherTarget
@@ -962,7 +976,7 @@ class hyperXprediction:
 
 				unvisited = []
 
-				for i in range(0 , 300):
+				for i in range(0 , len(self.id)):
 					if i not in self.visited:
 						unvisited.append(i)
 
@@ -970,28 +984,24 @@ class hyperXprediction:
 			print("\ntrying an vs to")
 			agent1_state = self.hyperState
 			visited = self.visited.copy()
-			agent2_state = visited[1]
-			print("unvisited is ",unvisited)
+			agent2_state = self.otherState
 			print("agent1_state is ",agent1_state , "agent1_state is ", agent2_state)
-			leaveHim = False
+			leaveHim = self.leaveHim
 
 			unvisited = []
-			for i in range(0 , 300):
+			for i in range(0 , len(self.id)):
 				if i not in self.visited:
 					unvisited.append(i)
 
 
-			to2 = twoOpt(int(agent2_state))
-			twoOptFullPath_2 = to2.driver()
-			
-
 			while(agent1_state != -1 or agent2_state != -1):
 
-				otherTarget = twoOptFullPath_2[int(len(visited) / 2)]
-
-				an2 = aggressiveNeighbour(int(agent1_state) , int(agent2_state) , int(otherTarget) ,visited,leaveHim)
+				to = twoOpt(self.csv_file_path , int(agent2_state) , visited)
+				otherTarget = to.driver()
+			
+				an2 = aggressiveNeighbour(self.csv_file_path , int(agent1_state) , int(agent2_state) , int(otherTarget) ,visited,leaveHim)
 				hyperTarget , leaveHim = an2.driver()
-
+			
 				print("agent1_state =", hyperTarget,"agent2_state =",otherTarget)
 
 				if(hyperTarget == -1):
@@ -1007,40 +1017,36 @@ class hyperXprediction:
 
 				unvisited = []
 
-				for i in range(0 , 300):
+				for i in range(0 , len(self.id)):
 					if i not in self.visited:
 						unvisited.append(i)
 
 
 			print("\ntrying to vs to")
-
 			
+			agent1_state = self.hyperState
 			visited = self.visited.copy()
-			agent1_state = visited[0]
-			agent2_state = visited[1]
-			
+			agent2_state = self.otherState
+			print("agent1_state is ",agent1_state , "agent1_state is ", agent2_state)
+
 			unvisited = []
-			for i in range(0 , 300):
+			for i in range(0 , len(self.id)):
 				if i not in self.visited:
 					unvisited.append(i)
-			print("unvisited is ",unvisited)
 
-			to1 = twoOpt(int(agent1_state))
-			twoOptFullPath_1 = to1.driver()			
-
-			to2 = twoOpt(int(agent2_state))
-			twoOptFullPath_2 = to2.driver()
-			
-			while(len(unvisited) != 0):
-
-				otherTarget = twoOptFullPath_2[int(len(visited) / 2)]
-				hyperTarget = twoOptFullPath_1[int(len(visited) / 2)]
+			while(agent1_state != -1 or agent2_state != -1):
+				to1 = twoOpt(self.csv_file_path , int(agent1_state) , visited)
+				hyperTarget = to1.driver()
+				
+				to2 = twoOpt(self.csv_file_path , int(agent2_state) , visited)
+				otherTarget = to2.driver()
 
 				print("agent1_state =", hyperTarget,"agent2_state =",otherTarget)
-				#carefull in finding benifit.
-				#it should be (prev state) -> (current state).
-				#here agent_state1 , agent_state2 are starting of path,cant be used here.
-				allBenifits[2] += self.findBenifit(twoOptFullPath_1[int(len(visited)/2) - 1] , twoOptFullPath_2[int(len(visited)/2 - 1)] , hyperTarget , otherTarget , visited)
+
+				if(hyperTarget == -1):
+					break
+
+				allBenifits[2] += self.findBenifit(agent1_state , agent2_state , hyperTarget , otherTarget , visited)#benifit of nn for hyper
 				
 				agent1_state = hyperTarget
 				agent2_state = otherTarget
@@ -1050,10 +1056,9 @@ class hyperXprediction:
 
 				unvisited = []
 
-				for i in range(0 , 300):
-					if i not in visited:
+				for i in range(0 , len(self.id)):
+					if i not in self.visited:
 						unvisited.append(i)
-				print("unvisited is",unvisited)
 
 
 		elif(otherPolicy == "rn"):

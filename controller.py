@@ -2,12 +2,19 @@ from multiprocessing.connection import Client
 import pandas as pd
 import time
 import random
-from prediction_utils import nearestNeighbour , twoOpt , aggressiveNeighbour
-from random_neighbour import random
+from prediction_utils import nearestNeighbour , twoOpt , aggressiveNeighbour , random
+#from random_neighbour import random
 from hyperX import hyperXprediction
+import sys
 
-csv_file_path = "distanceFileThreeHundred.csv"
+#def init(csv_path):
+global csv_file_path , df , id
+csv_file_path = sys.argv[1]
 df = pd.read_csv(csv_file_path)
+id = df.id
+#runAll()
+print("HEY I AM IN CONTRLLER")
+#def runAll():
 
 address = ('localhost', 6000)
 conn = Client(address, authkey=b'secret password')
@@ -16,7 +23,7 @@ address2 = ('localhost', 7000)
 conn2 = Client(address2, authkey=b'secret password')
 
 #set policy for other agent....
-otherAgentPolicyForDemo = "nn"
+otherAgentPolicyForDemo = str(sys.argv[2])
 hyperXPolicy = "nn"
 
 conn2.send(otherAgentPolicyForDemo)				#send other agent's policy to write log in csv.
@@ -44,7 +51,7 @@ def giveInfoToEnv(agent1_target , agent2_target):
 
 print("Trying demo run....")
 
-twoOptFullPathCalculated = False
+#twoOptFullPathCalculated = False
 
 initializeStartStates = False			#to give starting states to hyperX to find path from start,and find possibility
 start_agent_state_1 = 0
@@ -71,32 +78,32 @@ for i in range(0 , 4):
 		initializeStartStates  =True
 
 	if(otherAgentPolicyForDemo == "nn"):
-		nn1 = nearestNeighbour(int(agent1_state) , visited)
-		nn2 = nearestNeighbour(int(agent2_state) , visited)
+		nn1 = nearestNeighbour(csv_file_path,int(agent1_state) , visited)
+		nn2 = nearestNeighbour(csv_file_path,int(agent2_state) , visited)
 		agent1_target = nn1.driver()
 		agent2_target = nn2.driver()
 
 	elif(otherAgentPolicyForDemo == "an"):
-		nn1 = nearestNeighbour(int(agent1_state) , visited)
+		nn1 = nearestNeighbour(csv_file_path,int(agent1_state) , visited)
 		agent1_target = nn1.driver()
-		an2 = aggressiveNeighbour(int(agent2_state) , int(agent1_state) , agent1_target , visited,leaveHim)
+		an2 = aggressiveNeighbour(csv_file_path,int(agent2_state) , int(agent1_state) , agent1_target , visited,leaveHim)
 		agent2_target , leaveHim = an2.driver()
 
 	elif(otherAgentPolicyForDemo == "to"):				#full path is already calculated for agent 2
 		#agent2_target = fullPath[twoOptPathCounter]
 		#twoOptPathCounter += 1
-		to = twoOpt(int(agent2_state) , visited)
+		to = twoOpt(csv_file_path,int(agent2_state) , visited)
 		agent2_target = to.driver()
 		print("giving nn state ",agent1_state , "visited ",visited)
-		nn1 = nearestNeighbour(int(agent1_state) , visited)
+		nn1 = nearestNeighbour(csv_file_path,int(agent1_state) , visited)
 		agent1_target = nn1.driver()
 		print("nn gave ",agent1_target)
 
 
 	elif(otherAgentPolicyForDemo == "rn"):
-		rn2 = random(int(agent2_state) , visited)
+		rn2 = random(csv_file_path,int(agent2_state) , visited)
 		agent2_target = rn2.driver()
-		nn1 = nearestNeighbour(int(agent1_state) , visited)
+		nn1 = nearestNeighbour(csv_file_path,int(agent1_state) , visited)
 		agent1_target = nn1.driver()
 
 	print("agent1_target in demo run " , agent1_target)
@@ -113,13 +120,14 @@ for i in range(0 , 4):
 leaveHimForFirstStep = leaveHim
 #moves.append(agent2_state)						#adding last state
 #print("after demo  visited is " , visited)
-input()
+#input()
+#time.sleep(3)
 while(agent1_state != -1 or agent2_state != -1):
 	#find new policy from history
 	indexForLeaveHimFirstStep = 0
 
 	print("sending hyperX leaveHim value for proper prediction",leaveHimForFirstStep)
-	hyperAgent = hyperXprediction(int(start_agent_state_1) , int(start_agent_state_2) , int(end_agent_state1) , int(end_agent_state2) , start_visited , visited , moves , hyperXPolicy,leaveHimForFirstStep)
+	hyperAgent = hyperXprediction(csv_file_path,int(start_agent_state_1) , int(start_agent_state_2) , int(end_agent_state1) , int(end_agent_state2) , start_visited , visited , moves , hyperXPolicy,leaveHimForFirstStep)
 	bestPolicy , randomCitiesChosen  = hyperAgent.findBestPolicy()
 	hyperXPolicy = bestPolicy
 
@@ -152,14 +160,14 @@ while(agent1_state != -1 or agent2_state != -1):
 			
 			if(otherAgentPolicyForDemo == "nn"):
 
-				nn1 = nearestNeighbour(int(agent1_state) , visited)
-				nn2 = nearestNeighbour(int(agent2_state) , visited)
+				nn1 = nearestNeighbour(csv_file_path , int(agent1_state) , visited)
+				nn2 = nearestNeighbour(csv_file_path , int(agent2_state) , visited)
 				agent1_target = nn1.driver()
 				agent2_target = nn2.driver()
 
 			elif(otherAgentPolicyForDemo == "an"):
 
-				nn1 = nearestNeighbour(int(agent1_state) , visited)
+				nn1 = nearestNeighbour(csv_file_path , int(agent1_state) , visited)
 				agent1_target = nn1.driver()
 				
 				if(indexForLeaveHimFirstStep == 0):
@@ -167,23 +175,23 @@ while(agent1_state != -1 or agent2_state != -1):
 					print("storing ind")
 					indexForLeaveHimFirstStep += 1
 
-				an2 = aggressiveNeighbour(int(agent2_state) , int(agent1_state) , agent1_target , visited,leaveHim)
+				an2 = aggressiveNeighbour(csv_file_path , int(agent2_state) , int(agent1_state) , agent1_target , visited,leaveHim)
 				agent2_target , leaveHim = an2.driver()
 
 			
 			elif(otherAgentPolicyForDemo == "rn"):
-				rn2 = random(int(agent2_state) , visited)
+				rn2 = random(csv_file_path , int(agent2_state) , visited)
 				agent2_target = rn2.driver()
-				nn1 = nearestNeighbour(int(agent1_state) , visited)
+				nn1 = nearestNeighbour(csv_file_path , int(agent1_state) , visited)
 				agent1_target = nn1.driver()				
 
-			'''elif(otherAgentPolicyForDemo == "to"):
+			elif(otherAgentPolicyForDemo == "to"):
 				#agent2_target = fullPath[twoOptPathCounter]
 				#twoOptPathCounter += 1
-				to = twoOpt(int(agent2_state) , visited)
+				to = twoOpt(csv_file_path , int(agent2_state) , visited)
 				agent2_target = to.driver()
-				nn1 = nearestNeighbour(int(agent1_state) , visited)
-				agent1_target = nn1.driver()'''
+				nn1 = nearestNeighbour(csv_file_path , int(agent1_state) , visited)
+				agent1_target = nn1.driver()
 
 			print("agent1_target is ", agent1_target)
 			print("agent2_target is ", agent2_target)
@@ -203,11 +211,11 @@ while(agent1_state != -1 or agent2_state != -1):
 			#visited.append(agent2_target)
 			#moves.append(int(agent2_state))				#store only 2nd agent's moves
 
-			input("")
+			#input("")
 
 	elif(bestPolicy == "an"):	#4 possibilities(an vs otherAgentPolicy(nn,an,rn,to))
 		ditchingChance = 1
-		switched = False
+		#switched = False		#useless,to be removed.
 
 		for i in range(0 , 4):
 
@@ -220,9 +228,9 @@ while(agent1_state != -1 or agent2_state != -1):
 
 			if(otherAgentPolicyForDemo == "nn"):
 
-				nn2 = nearestNeighbour(int(agent2_state) , visited)
+				nn2 = nearestNeighbour(csv_file_path , int(agent2_state) , visited)
 				agent2_target = nn2.driver()
-				an1 = aggressiveNeighbour(int(agent1_state) , int(agent2_state) , agent2_target ,visited,leaveHim)
+				an1 = aggressiveNeighbour(csv_file_path , int(agent1_state) , int(agent2_state) , agent2_target ,visited,leaveHim)
 				agent1_target , leaveHim = an1.driver()
 			
 			elif(otherAgentPolicyForDemo == "an"):
@@ -266,27 +274,27 @@ while(agent1_state != -1 or agent2_state != -1):
 
 				if(ditchingChance == 1):
 					print("agent2 playing")
-					an2 = aggressiveNeighbour(int(agent2_state),int(agent1_state),int(agent1_state),visited,True)
+					an2 = aggressiveNeighbour(csv_file_path , int(agent2_state),int(agent1_state),int(agent1_state),visited,True)
 					agent2_target , leaveHim = an2.driver()
 					
 					print("agent1 playing")
-					an1 = aggressiveNeighbour(int(agent1_state),int(agent2_state),int(agent2_target),visited,False)
+					an1 = aggressiveNeighbour(csv_file_path , int(agent1_state),int(agent2_state),int(agent2_target),visited,False)
 					agent1_target , leaveHim = an1.driver()
 
 					if(leaveHim == True):
 						ditchingChance = 2
 						print("agent1 ditched agent2.now switching chance.")
-						switched = True
+						#switched = True
 
 					#ditchingChance = 2
 
 				elif(ditchingChance == 2):
 					print("agent1 playing")
-					an1 = aggressiveNeighbour(int(agent1_state),int(agent2_state),int(agent2_state),visited,True)
+					an1 = aggressiveNeighbour(csv_file_path , int(agent1_state),int(agent2_state),int(agent2_state),visited,True)
 					agent1_target , leaveHim = an1.driver()
 					
 					print("agent2 playing")
-					an2 = aggressiveNeighbour(int(agent2_state),int(agent1_state),int(agent1_target),visited,False)
+					an2 = aggressiveNeighbour(csv_file_path , int(agent2_state),int(agent1_state),int(agent1_target),visited,False)
 					agent2_target , leaveHim = an2.driver()
 					
 					if(leaveHim == True):
@@ -295,23 +303,21 @@ while(agent1_state != -1 or agent2_state != -1):
 					#ditchingChance = 1
 
 
-
-
 			elif(otherAgentPolicyForDemo == "rn"):
-				rn2 = random(int(agent2_state) , visited)
+				rn2 = random(csv_file_path , int(agent2_state) , visited)
 				agent2_target = rn2.driver()
-				an1 = aggressiveNeighbour(int(agent1_state) , int(agent2_state) , agent2_target ,visited , leaveHim)
+				an1 = aggressiveNeighbour(csv_file_path , int(agent1_state) , int(agent2_state) , agent2_target ,visited , leaveHim)
 				agent1_target , leaveHim = an1.driver()
 
-			'''
+			
 			elif(otherAgentPolicyForDemo == "to"):
-				to2 = twoOpt(int(agent2_state) , visited)
+				to2 = twoOpt(csv_file_path , int(agent2_state) , visited)
 				agent2_target = to2.driver()
 				#agent2_target = fullPath[twoOptPathCounter]
 				#twoOptPathCounter += 1
-				an1 = aggressiveNeighbour(int(agent1_state) , int(agent2_state) , agent2_target ,visited,leaveHim)
+				an1 = aggressiveNeighbour(csv_file_path , int(agent1_state) , int(agent2_state) , agent2_target ,visited,leaveHim)
 				agent1_target = an1.driver()				
-			'''
+			
 
 			print("agent1_target is ", agent1_target)
 			print("agent2_target is ", agent2_target)
@@ -392,7 +398,7 @@ while(agent1_state != -1 or agent2_state != -1):
 			#input("")
 
 	elif(bestPolicy == "rn"):
-		print("using hyperX in controller")
+		
 		for i in range(0 , 4):
 			end_agent_state1 , end_agent_state2 = agent1_state , agent2_state
 
@@ -403,30 +409,30 @@ while(agent1_state != -1 or agent2_state != -1):
 
 			if(otherAgentPolicyForDemo == "nn"):
 				#rn1 = random(int(agent1_state) , visited)
-				nn2 = nearestNeighbour(int(agent2_state) , visited)
+				nn2 = nearestNeighbour(csv_file_path , int(agent2_state) , visited)
 				#agent1_target = nn1.driver()
 				agent1_target = randomCitiesChosen[i]
 				agent2_target = nn2.driver()
 			
 			elif(otherAgentPolicyForDemo == "an"):
-				rn1 = random(int(agent1_state) , visited)
+				rn1 = random(csv_file_path , int(agent1_state) , visited)
 				#agent1_target = rn1.driver()
 				agent1_target = randomCitiesChosen[i]
-				an2 = aggressiveNeighbour(int(agent2_state) , int(agent1_state) , int(agent1_target) , visited)
+				an2 = aggressiveNeighbour(csv_file_path , int(agent2_state) , int(agent1_state) , int(agent1_target) , visited)
 				agent2_target = an2.driver()
 
 			elif(otherAgentPolicyForDemo == "to"):
 				agent2_target = fullPath[twoOptPathCounter]
 				twoOptPathCounter += 1
-				rn1 = random(int(agent1_state) , visited)
+				rn1 = random(csv_file_path , int(agent1_state) , visited)
 				#agent1_target = rn1.driver()
 				agent1_target = randomCitiesChosen[i]
 
 			elif(otherAgentPolicyForDemo == "rn"):
-				rn1 = random(int(agent1_state) , visited)
+				rn1 = random(csv_file_path , int(agent1_state) , visited)
 				#agent1_target = rn1.driver()
 				agent1_target = randomCitiesChosen[i]
-				rn2 = random(int(agent2_state) , visited)
+				rn2 = random(csv_file_path , int(agent2_state) , visited)
 				agent2_target = rn2.driver()				
 
 			if(i != 3):
@@ -439,14 +445,16 @@ while(agent1_state != -1 or agent2_state != -1):
 			agent1_state = agent1_target
 			agent2_state = agent2_target
 			#input("")
-	#input("")
+	#time.sleep(3)
+	#input()
 	#end_agent_state1 = agent1_state
 	#end_agent_state2 = agent2_state
 giveInfoToEnv(-1 , -1)
+
 print(visited)
 conn.close()
 conn2.close()
-
+exit()
 
 
 
